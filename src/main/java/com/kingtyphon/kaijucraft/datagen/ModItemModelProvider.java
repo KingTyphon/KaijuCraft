@@ -1,7 +1,7 @@
 package com.kingtyphon.kaijucraft.datagen;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.item.ItemInit;
+import com.kingtyphon.kaijucraft.init.ItemInit;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

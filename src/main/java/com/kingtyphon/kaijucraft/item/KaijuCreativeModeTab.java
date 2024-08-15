@@ -1,14 +1,13 @@
 package com.kingtyphon.kaijucraft.item;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
+import com.kingtyphon.kaijucraft.init.ItemInit;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -34,8 +33,7 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MDEFENSECASUAL_BOOTS.get());
 
                         // Add other items here
-                        // Example:
-                        // output.accept(ItemInit.SOME_OTHER_ITEM.get());
+                        output.accept(ItemInit.GLOCK17GEN4.get());
                     }).build());
 
     public static void register(IEventBus eventBus) {
