@@ -1,5 +1,7 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
+import net.minecraft.nbt.CompoundTag;
+
 public class KaijuCapability implements IKaijuCapability{
 
     private float energy;
@@ -80,5 +82,23 @@ public class KaijuCapability implements IKaijuCapability{
         this.level= player.getLevel();
         this.xp =  player.getXP();
         this.maxXp = player.getMaxXp();
+    }
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        this.energy = nbt.getFloat("Energy");
+        this.maxEnergy = nbt.getFloat("MaxEnergy");
+        this.level = nbt.getInt("Level");
+        this.xp = nbt.getInt("XP");
+        this.maxXp = nbt.getInt("MaxXp");
+    }
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        tag.putFloat("Energy",this.energy);
+        tag.putFloat("MaxEnergy", this.maxEnergy);
+        tag.putInt("Level", this.level);
+        tag.putInt("XP", this.xp);
+        tag.putInt("MaxXp", this.maxXp);
+        return tag;
     }
 }

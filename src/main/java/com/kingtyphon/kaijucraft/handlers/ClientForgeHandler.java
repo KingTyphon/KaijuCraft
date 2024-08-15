@@ -19,13 +19,7 @@ import static com.mojang.text2speech.Narrator.LOGGER;
 
 @Mod.EventBusSubscriber(modid = KaijuCraft.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientForgeHandler {
-    @SubscribeEvent
-    public static void clientTick(TickEvent.ClientTickEvent event){
-        if(KaijuKeybinds.INSTANCE.kaijuGui.consumeClick()){
-                LOGGER.debug("Key for Kaiju GUI pressed");
-                Minecraft.getInstance().setScreen(new KaijuGui());
-            }
-    }
+
     @SubscribeEvent
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
         AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();

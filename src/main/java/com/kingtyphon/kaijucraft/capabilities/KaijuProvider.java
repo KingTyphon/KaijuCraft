@@ -44,4 +44,5 @@ public class KaijuProvider implements ICapabilityProvider, INBTSerializable<Comp
         instance.setXP(nbt.getInt("XP"));
         instance.setMaxXp(nbt.getInt("MaxXp"));
     }
+
 }

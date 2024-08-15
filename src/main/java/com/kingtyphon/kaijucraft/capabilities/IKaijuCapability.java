@@ -1,8 +1,8 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 
-@AutoRegisterCapability
+import net.minecraft.nbt.CompoundTag;
+
 public interface IKaijuCapability {
     public void levelUp();
     public float getEnergy();
@@ -17,4 +17,6 @@ public interface IKaijuCapability {
     public void setEnergy(float energy);
     public void setMaxEnergy(float maxEnergy);
     public void copyFrom(IKaijuCapability player);
+    public void deserializeNBT(CompoundTag nbtData);
+    public CompoundTag serializeNBT();
 }

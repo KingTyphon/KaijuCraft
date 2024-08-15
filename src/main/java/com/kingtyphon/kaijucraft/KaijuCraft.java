@@ -1,6 +1,8 @@
 package com.kingtyphon.kaijucraft;
 
 
+import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
+import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
 import com.kingtyphon.kaijucraft.handlers.ClientForgeHandler;
 import com.kingtyphon.kaijucraft.handlers.KeyInputHandler;
 import com.kingtyphon.kaijucraft.init.ItemInit;
@@ -10,6 +12,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -77,10 +80,14 @@ public class KaijuCraft
         public static void onClientSetup(FMLClientSetupEvent event)
         {
         }@SubscribeEvent
-    public static void registerKeys(RegisterKeyMappingsEvent event) {
+        public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(KaijuKeybinds.INSTANCE.kaijuGui);
 
-    }
+        }
+        @SubscribeEvent
+        public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+            event.register(IKaijuCapability.class);
+        }
     }
 
 }

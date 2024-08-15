@@ -1,10 +1,16 @@
 package com.kingtyphon.kaijucraft.commands;
 
+import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
 import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.networking.ModMessages;
+import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -14,17 +20,20 @@ public class SetLevelCommand {
     dispatcher.register(Commands.literal("setKaijuLevel")
             .requires(commandSource -> commandSource.hasPermission(2)) // Permission level 2: OPs
             .then(Commands.argument("level", IntegerArgumentType.integer(1))
-                    .executes(context -> {
+                    .then(Commands.argument("player", EntityArgument.player()).executes(context -> {
                         int level = IntegerArgumentType.getInteger(context, "level");
-                        ServerPlayer player = context.getSource().getPlayerOrException();
-                        return setKaijuLevel(player, level);
+                        ServerPlayer selectedPlayer = (ServerPlayer) EntityArgument.getEntity(context, "player");
+                        return setKaijuLevel(selectedPlayer, level);
                     })
             )
-    );}
+            ));
+    }
     private static int setKaijuLevel(ServerPlayer player, int level) {
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(capability -> {
             capability.setLevel(level);
-            player.sendSystemMessage(Component.literal("Current Level set to " + level));
+            CompoundTag nbtdata = capability.serializeNBT();
+            ModMessages.send(new KaijuPacket(nbtdata),player);
+            player.sendSystemMessage(Component.translatable("Current Level set to " + level).withStyle(ChatFormatting.DARK_RED));
         });
         return 1; // Command succeeded
     }
