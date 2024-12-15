@@ -5,9 +5,18 @@
   "item.kaijucraft.mdefensecasual_chestplate": "Defense Casual Jacket",
   "item.kaijucraft.mdefensecasual_leggings": "Defense Casual Pants",
   "item.kaijucraft.mdefensecasual_boots": "Defense Casual Shoes",
-  "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
-  "key.kaijucraft.gui_key": "Combat Menu",
-  "key.categories.kaijucraft": "Kaiju Craft",
 
+  "item.kaijucraft.mcombat_boots": "Combat Boots",
+  "item.kaijucraft.mcombat_chestplate": "Combat Shirt",
+  "item.kaijucraft.mcombat_leggings": "Combat Pants",
+
+  "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
+
+  "key.kaijucraft.gui_key": "Combat Menu",
+  "key.kaijucraft.transform_key": "Transform",
+
+
+  "key.categories.kaijucraft": "Kaiju Craft",
   "creativetab.kaiju_tab" : "Kaiju Craft"
+
 }

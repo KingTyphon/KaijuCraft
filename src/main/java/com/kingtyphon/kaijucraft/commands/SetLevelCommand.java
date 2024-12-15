@@ -31,8 +31,8 @@ public class SetLevelCommand {
     private static int setKaijuLevel(ServerPlayer player, int level) {
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(capability -> {
             capability.setLevel(level);
-            CompoundTag nbtdata = capability.serializeNBT();
-            ModMessages.send(new KaijuPacket(nbtdata),player);
+            //CompoundTag nbtdata = capability.serializeNBT();
+            ModMessages.send(new KaijuPacket(capability),player);
             player.sendSystemMessage(Component.translatable("Current Level set to " + level).withStyle(ChatFormatting.DARK_RED));
         });
         return 1; // Command succeeded

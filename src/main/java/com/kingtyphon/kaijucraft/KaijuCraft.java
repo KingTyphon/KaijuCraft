@@ -3,12 +3,14 @@ package com.kingtyphon.kaijucraft;
 
 import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
 import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
-import com.kingtyphon.kaijucraft.handlers.ClientForgeHandler;
 import com.kingtyphon.kaijucraft.handlers.KeyInputHandler;
 import com.kingtyphon.kaijucraft.init.ItemInit;
 import com.kingtyphon.kaijucraft.item.KaijuCreativeModeTab;
 import com.kingtyphon.kaijucraft.keybinds.KaijuKeybinds;
+import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,7 +41,6 @@ public class KaijuCraft
         // Register the commonSetup method for modloading
         GeckoLib.initialize();
         KaijuCreativeModeTab.register(modEventBus);
-
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::onClientSetup);
 
@@ -57,14 +58,14 @@ public class KaijuCraft
     private void commonSetup(final FMLCommonSetupEvent event)
     {
 
+        ModMessages.register();
 
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(new ClientForgeHandler());
+        //MinecraftForge.EVENT_BUS.register(new ClientForgeHandler());
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
-
 
     }
 
@@ -82,8 +83,10 @@ public class KaijuCraft
         }@SubscribeEvent
         public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(KaijuKeybinds.INSTANCE.kaijuGui);
+        event.register(KaijuKeybinds.INSTANCE.tranform);
 
-        }
+
+    }
         @SubscribeEvent
         public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
             event.register(IKaijuCapability.class);

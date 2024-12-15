@@ -33,6 +33,13 @@ public class KaijuProvider implements ICapabilityProvider, INBTSerializable<Comp
         tag.putInt("Level", instance.getLevel());
         tag.putInt("XP", instance.getXP());
         tag.putInt("MaxXp", instance.getMaxXp());
+        tag.putInt("SP", instance.getSP());
+        tag.putInt("Range", instance.getRange());
+        tag.putInt("Mind", instance.getMind());
+        tag.putInt("Melee", instance.getMelee());
+        tag.putBoolean("percentageRandomizerFlag", instance.percentageRandomizerCheck());
+        tag.putBoolean("Transformed", instance.isTransformed());
+
         return tag;
     }
 
@@ -43,6 +50,13 @@ public class KaijuProvider implements ICapabilityProvider, INBTSerializable<Comp
         instance.setLevel(nbt.getInt("Level"));
         instance.setXP(nbt.getInt("XP"));
         instance.setMaxXp(nbt.getInt("MaxXp"));
+        instance.setSP(nbt.getInt("SP"));
+        instance.setMind(nbt.getInt("Mind"));
+        instance.setMelee(nbt.getInt("Melee"));
+        instance.setRange(nbt.getInt("Range"));
+        instance.setPercentRandomizer(nbt.getBoolean("percentageRandomizerFlag"));
+        instance.setPercentRandomizer(nbt.getBoolean("Transformed"));
+
     }
 
 }

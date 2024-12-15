@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "com.kaijucraft.mixins",
+  "mixins": [
+    "PlayerRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

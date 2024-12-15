@@ -32,6 +32,10 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MDEFENSECASUAL_LEGGINGS.get());
                         output.accept(ItemInit.MDEFENSECASUAL_BOOTS.get());
 
+                        // Armor - Combat Outfit
+                        output.accept(ItemInit.MCOMBAT_CHESTPLATE.get());
+                        output.accept(ItemInit.MCOMBAT_LEGGINGS.get());
+                        output.accept(ItemInit.MCOMBAT_BOOTS.get());
                         // Add other items here
                         output.accept(ItemInit.GLOCK17GEN4.get());
                     }).build());
