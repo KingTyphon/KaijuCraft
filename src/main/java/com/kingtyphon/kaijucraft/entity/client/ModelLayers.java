@@ -1,0 +1,10 @@
+package com.kingtyphon.kaijucraft.entity.client;
+
+import com.kingtyphon.kaijucraft.KaijuCraft;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.ResourceLocation;
+
+public class ModelLayers {
+    public static final ModelLayerLocation KAIJU_NO8_LAYER = new ModelLayerLocation(
+            new ResourceLocation(KaijuCraft.MODID, "kaiju_no8_layer"), "main");
+}

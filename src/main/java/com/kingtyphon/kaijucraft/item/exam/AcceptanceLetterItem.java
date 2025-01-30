@@ -34,7 +34,7 @@ public class AcceptanceLetterItem extends Item {
                 kapability.setLevel(randomCombatPower(5, 20)); // range for 0%-4% CPP
             }
             if (chance <= 107 || chance> 97) {
-                kapability.setLevel(randomCombatPower(21, 39)); // range for 0%-4% CPP
+                kapability.setLevel(randomCombatPower(21, 39)); // range for 21%-39% CPP
             }
             if (chance <= 112 || chance> 97) {
                 kapability.setLevel(randomCombatPower(40 , 50)); // range for 0%-4% CPP

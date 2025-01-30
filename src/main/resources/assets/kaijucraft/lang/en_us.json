@@ -6,17 +6,25 @@
   "item.kaijucraft.mdefensecasual_leggings": "Defense Casual Pants",
   "item.kaijucraft.mdefensecasual_boots": "Defense Casual Shoes",
 
+  "item.kaijucraft.mcombat_helmet": "Gas Mask",
   "item.kaijucraft.mcombat_boots": "Combat Boots",
   "item.kaijucraft.mcombat_chestplate": "Combat Shirt",
   "item.kaijucraft.mcombat_leggings": "Combat Pants",
 
-  "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
+  "entity.kaijucraft.kaiju_no8": "Kaiju No.8",
 
-  "key.kaijucraft.gui_key": "Combat Menu",
+  "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
+  "item.kaijucraft.kaiju_no8_spawn_egg": "Kaiju No.8 Spawn Egg",
+  "item.kaijucraft.larva_spawn_egg": "Larva Spawn Egg",
+  "item.kaijucraft.sigsauershortrifle": "Sig Sauer Short Rifle",
+  "item.kaijucraft.pneumatic_chainsaw": "Pneumatic Chainsaw",
+
+  "key.kaijucraft.gui_key": "Kombat Menu",
   "key.kaijucraft.transform_key": "Transform",
 
 
-  "key.categories.kaijucraft": "Kaiju Craft",
-  "creativetab.kaiju_tab" : "Kaiju Craft"
+  "key.categories.kaijucraft": "Kaiju Kraft",
+
+  "creativetab.kaiju_tab" : "Kaiju Kraft"
 
 }

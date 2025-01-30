@@ -14,12 +14,5 @@ public abstract class PlayerRendererMixin {
     private void onRenderPlayer(Player player, float entityYaw, float partialTicks, CallbackInfo ci) {
         // Check if the player is transformed
 
-        player.getCapability(KaijuProvider.KAIJU_CAPABILITY, null).ifPresent(kapability ->{
-        boolean isTransformed = kapability.isTransformed();
-        if (isTransformed) {
-                ci.cancel();
-            }});
-
-
     }
 }

@@ -1,0 +1,57 @@
+{
+  "kaiju_no8_growl1": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_growl1",
+    "sounds": [
+      "kaijucraft:kaiju_no8_growl1"
+    ]
+  },
+  "kaiju_no8_growl2": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_growl2",
+    "sounds":[
+      "kaijucraft:kaiju_no8_growl2"
+    ]
+  },
+  "kaiju_no8_growl3": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_growl3",
+    "sounds":[
+      "kaijucraft:kaiju_no8_growl3"
+    ]
+  },
+  "kaiju_no8_grunt1": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_grunt1",
+    "sounds":[
+      "kaijucraft:kaiju_no8_grunt1"
+    ]
+  },
+  "kaiju_no8_rage1": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_rage1",
+    "sounds":[
+      "kaijucraft:kaiju_no8_rage1"
+    ]
+  },
+  "kaiju_no8_roar1": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_roar1",
+    "sounds":[
+      "kaijucraft:kaiju_no8_roar1"
+    ]
+  },
+  "kaiju_no8_roar2": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_roar2",
+    "sounds":[
+      "kaijucraft:kaiju_no8_roar2"
+    ]
+  },
+  "kaiju_no8_punch1": {
+    "subtitles": "sounds.kaijucraft.kaiju_no8_punch1",
+    "sounds":[
+      "kaijucraft:kaiju_no8_roar2"
+    ]
+  },
+  "chainsaw_sound": {
+    "subtitles": "sounds.kaijucraft.chainsaw_sound",
+    "sounds": [
+      "kaijucraft:chainsaw_sound"
+    ]
+  }
+
+}

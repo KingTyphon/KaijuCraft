@@ -9,6 +9,7 @@ pluginManagement {
             name= 'Parchment'
             url = 'https://maven.parchmentmc.org'
         }
+
     }
 }
 buildscript {

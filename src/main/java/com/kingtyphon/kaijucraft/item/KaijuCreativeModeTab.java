@@ -31,11 +31,17 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MDEFENSECASUAL_CHESTPLATE.get());
                         output.accept(ItemInit.MDEFENSECASUAL_LEGGINGS.get());
                         output.accept(ItemInit.MDEFENSECASUAL_BOOTS.get());
+                        output.accept(ItemInit.SIGSAUERSHORTRIFLE.get());
+                        output.accept(ItemInit.PNEUMATICCHAINSAW.get());
 
                         // Armor - Combat Outfit
+                        output.accept(ItemInit.MCOMBAT_HELMET.get());
                         output.accept(ItemInit.MCOMBAT_CHESTPLATE.get());
                         output.accept(ItemInit.MCOMBAT_LEGGINGS.get());
                         output.accept(ItemInit.MCOMBAT_BOOTS.get());
+
+                        output.accept(ItemInit.KAIJU_NO8_SPAWN_EGG.get());
+                        output.accept(ItemInit.LARVA_SPAWN_EGG.get());
                         // Add other items here
                         output.accept(ItemInit.GLOCK17GEN4.get());
                     }).build());

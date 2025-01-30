@@ -29,6 +29,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.MCOMBAT_LEGGINGS);
         simpleItem(ItemInit.MCOMBAT_CHESTPLATE);
 
+        simpleItem(ItemInit.NHCLEANING_CHESTPLATE);
+
     }
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {
         return withExistingParent(item.getId().getPath(), new ResourceLocation("item/generated")).texture("layer0", new ResourceLocation(KaijuCraft.MODID,"item/" + item.getId().getPath()));

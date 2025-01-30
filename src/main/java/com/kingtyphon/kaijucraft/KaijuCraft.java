@@ -2,29 +2,49 @@ package com.kingtyphon.kaijucraft;
 
 
 import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
+import com.kingtyphon.kaijucraft.entity.animations.GunAnimation3rdPerson;
+import com.kingtyphon.kaijucraft.entity.client.Kaiju_no8Renderer;
+import com.kingtyphon.kaijucraft.entity.client.LarvaRenderer;
+import com.kingtyphon.kaijucraft.event.CustomRenderRegistry;
 import com.kingtyphon.kaijucraft.handlers.KeyInputHandler;
+import com.kingtyphon.kaijucraft.init.EntityInit;
 import com.kingtyphon.kaijucraft.init.ItemInit;
 import com.kingtyphon.kaijucraft.item.KaijuCreativeModeTab;
+import com.kingtyphon.kaijucraft.item.guns.SigSauerShortRifleItem;
 import com.kingtyphon.kaijucraft.keybinds.KaijuKeybinds;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
+import com.kingtyphon.kaijucraft.sound.KaijuSounds;
 import com.mojang.logging.LogUtils;
+import dev.kosmx.playerAnim.api.layered.IAnimation;
+import dev.kosmx.playerAnim.api.layered.ModifierLayer;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+import software.bernie.example.registry.EntityRegistry;
 import software.bernie.geckolib.GeckoLib;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -37,13 +57,16 @@ public class KaijuCraft
     public KaijuCraft()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+
         ItemInit.register(modEventBus);
+        EntityInit.register(modEventBus);
+        KaijuSounds.register(modEventBus);
         // Register the commonSetup method for modloading
         GeckoLib.initialize();
         KaijuCreativeModeTab.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::onClientSetup);
-
 
 
 
@@ -66,7 +89,7 @@ public class KaijuCraft
     {
         //MinecraftForge.EVENT_BUS.register(new ClientForgeHandler());
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
-
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animation"), 42, KaijuCraft::registerPlayerAnimation);
     }
 
     @SubscribeEvent
@@ -77,9 +100,19 @@ public class KaijuCraft
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
+
+        @SubscribeEvent
+        public static void onRegisterModelPredicates(RegisterClientReloadListenersEvent event) {
+            ItemProperties.register(ItemInit.PNEUMATICCHAINSAW.get(),
+                    new ResourceLocation("kaijucraft", "on"),
+                    (stack, world, entity, seed) -> stack.getOrCreateTag().getBoolean("on") ? 1.0F : 0.0F);
+        }
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
+            EntityRenderers.register(EntityInit.KAIJU_NO8.get(), Kaiju_no8Renderer::new);
+            EntityRenderers.register(EntityInit.LARVA.get(), LarvaRenderer::new);
+            CustomRenderRegistry.init();
         }@SubscribeEvent
         public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(KaijuKeybinds.INSTANCE.kaijuGui);
@@ -91,6 +124,10 @@ public class KaijuCraft
         public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
             event.register(IKaijuCapability.class);
         }
+    }
+    private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
+        //This will be invoked for every new player
+        return new ModifierLayer<>();
     }
 
 }

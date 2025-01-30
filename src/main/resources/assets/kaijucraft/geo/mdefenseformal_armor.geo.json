@@ -43,7 +43,7 @@
 				{
 					"name": "armorRightArm",
 					"parent": "bipedRightArm",
-					"pivot": [-5.95, 22, 0],
+					"pivot": [-5.7, 22, 0],
 					"cubes": [
 						{"origin": [-9.4, 13.4, -2.5], "size": [5, 11, 5], "uv": [1, 19]},
 						{"origin": [-9.55, 19.6, -3], "size": [4, 5, 6], "uv": [45, 1], "mirror": true}
@@ -56,7 +56,7 @@
 				{
 					"name": "armorLeftArm",
 					"parent": "bipedLeftArm",
-					"pivot": [5.95, 22, 0],
+					"pivot": [5.7, 22, 0],
 					"cubes": [
 						{"origin": [4.4, 13.4, -2.5], "size": [5, 11, 5], "uv": [21, 19], "mirror": true},
 						{"origin": [5.55, 19.6, -3], "size": [4, 5, 6], "uv": [45, 1]}

@@ -1,0 +1,11 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "kaijucraft:item/larva_spawn_egg"
+  },
+  "animations": {
+    "animation_name": {
+      "animation": "kaijucraft:item/larva_spawn_egg.png.mcmeta"
+    }
+  }
+}

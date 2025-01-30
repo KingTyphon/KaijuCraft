@@ -30,6 +30,7 @@ public class ModMessages {
                 .encoder(KaijuPacket::toBytes)
                 .consumerMainThread(KaijuPacket::handle)
                 .add();
+
     }
 
     public static <MSG> void sendToServer(MSG message){
@@ -38,5 +39,6 @@ public class ModMessages {
 
     public static <MSG> void send(MSG message, ServerPlayer player){
          INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+
     }
 }
