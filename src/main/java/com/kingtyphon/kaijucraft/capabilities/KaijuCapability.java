@@ -1,6 +1,12 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.phys.Vec3;
 
 public class KaijuCapability implements IKaijuCapability{
 
@@ -14,8 +20,60 @@ public class KaijuCapability implements IKaijuCapability{
     private int range;
     private int melee;
     private boolean percentageRandomizerFlag;
-    private boolean tranform;
+    private boolean transform;
+    private boolean autoSprint = false;
+    private double wallrunning = 0.0;
+    private double wallside = 0.0;
+    private boolean runningwall = false;
+    private boolean dash = false;
 
+    // Methods for handling wallrun capabilities (add to your existing methods)
+    public void syncWallrunVariables(Entity entity) {
+        if (entity instanceof Player) {
+            // Sync the new values for wallrun here, if needed
+        }
+    }
+
+    // Getter and Setter for Wallrun variables
+    public boolean getAutoSprint() {
+        return autoSprint;
+    }
+
+    public void setAutoSprint(boolean autoSprint) {
+        this.autoSprint = autoSprint;
+    }
+
+    public double getWallrunning() {
+        return wallrunning;
+    }
+
+    public void setWallrunning(double wallrunning) {
+        this.wallrunning = wallrunning;
+    }
+
+    public double getWallside() {
+        return wallside;
+    }
+
+    public void setWallside(double wallside) {
+        this.wallside = wallside;
+    }
+
+    public boolean isRunningwall() {
+        return runningwall;
+    }
+
+    public void setRunningwall(boolean runningwall) {
+        this.runningwall = runningwall;
+    }
+
+    public boolean isDash() {
+        return dash;
+    }
+
+    public void setDash(boolean dash) {
+        this.dash = dash;
+    }
 
     @Override
     public void levelUp() {
@@ -136,11 +194,11 @@ public class KaijuCapability implements IKaijuCapability{
 
     @Override
     public void setTransformed(boolean tranform){
-        this.tranform = tranform;
+        this.transform = tranform;
     }
     @Override
     public boolean isTransformed(){
-        return this.tranform;
+        return this.transform;
     }
 
 
@@ -156,9 +214,14 @@ public class KaijuCapability implements IKaijuCapability{
         this.range = player.getRange();
         this.melee = player.getMelee();
         this.percentageRandomizerFlag = player.percentageRandomizerCheck();
-        this.tranform = player.isTransformed();
-
+        this.transform = player.isTransformed();
+        this.autoSprint = player.getAutoSprint();
+        this.wallrunning = player.getWallrunning();
+        this.wallside = player.getWallside();
+        this.runningwall = player.isRunningwall();
+        this.dash = player.isDash();
     }
+
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         this.energy = nbt.getFloat("Energy");
@@ -171,7 +234,12 @@ public class KaijuCapability implements IKaijuCapability{
         this.range = nbt.getInt("Range");
         this.melee = nbt.getInt("Melee");
         this.percentageRandomizerFlag = nbt.getBoolean("PRF");
-        this.tranform = nbt.getBoolean("Transform");
+        this.transform = nbt.getBoolean("Transform");
+        this.autoSprint = nbt.getBoolean("AutoSprint");
+        this.wallrunning = nbt.getDouble("WallRunning");
+        this.wallside = nbt.getDouble("WallSide");
+        this.runningwall = nbt.getBoolean("RunningWall");
+        this.dash = nbt.getBoolean("Dash");
     }
     @Override
     public CompoundTag serializeNBT() {
@@ -186,8 +254,12 @@ public class KaijuCapability implements IKaijuCapability{
         tag.putInt("Range", this.range);
         tag.putInt("Melee", this.melee);
         tag.putBoolean("PRF", this.percentageRandomizerFlag);
-        tag.putBoolean("Transform", this.tranform);
-
+        tag.putBoolean("Transform", this.transform);
+        tag.putBoolean("AutoSprint", this.autoSprint);
+        tag.putDouble("WallRunning",this.wallrunning);
+        tag.putDouble("WallSide", this.wallside);
+        tag.putBoolean("RunningWall", this.runningwall);
+        tag.putBoolean("Dash", this.dash);
 
         return tag;
     }

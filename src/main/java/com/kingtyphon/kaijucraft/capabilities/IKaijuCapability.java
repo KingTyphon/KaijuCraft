@@ -2,8 +2,20 @@ package com.kingtyphon.kaijucraft.capabilities;
 
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 
 public interface IKaijuCapability {
+    public void syncWallrunVariables(Entity entity);
+    public boolean getAutoSprint();
+    public void setAutoSprint(boolean autoSprint);
+    public double getWallrunning();
+    public void setWallrunning(double wallrunning);
+    public double getWallside();
+    public void setWallside(double wallside);
+    public boolean isRunningwall();
+    public void setRunningwall(boolean runningwall);
+    public boolean isDash();
+    public void setDash(boolean dash);
     public int getMind();
     public int getMelee();
     public int getRange();

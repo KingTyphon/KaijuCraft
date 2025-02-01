@@ -26,12 +26,15 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -47,12 +50,19 @@ import org.slf4j.Logger;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.geckolib.GeckoLib;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(KaijuCraft.MODID)
 public class KaijuCraft
 {
     public static final String MODID = "kaijucraft";
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> workQueue = new ConcurrentLinkedQueue();
 
     public KaijuCraft()
     {
@@ -113,13 +123,7 @@ public class KaijuCraft
             EntityRenderers.register(EntityInit.KAIJU_NO8.get(), Kaiju_no8Renderer::new);
             EntityRenderers.register(EntityInit.LARVA.get(), LarvaRenderer::new);
             CustomRenderRegistry.init();
-        }@SubscribeEvent
-        public static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(KaijuKeybinds.INSTANCE.kaijuGui);
-        event.register(KaijuKeybinds.INSTANCE.tranform);
-
-
-    }
+        }
         @SubscribeEvent
         public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
             event.register(IKaijuCapability.class);
@@ -128,6 +132,27 @@ public class KaijuCraft
     private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
         //This will be invoked for every new player
         return new ModifierLayer<>();
+    }
+    public static void queueServerWork(int tick, Runnable action) {
+        workQueue.add(new AbstractMap.SimpleEntry(action, tick));
+    }
+    @SubscribeEvent
+    public void tick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList();
+            workQueue.forEach((work) -> {
+                work.setValue((Integer)work.getValue() - 1);
+                if ((Integer)work.getValue() == 0) {
+                    actions.add(work);
+                }
+
+            });
+            actions.forEach((e) -> {
+                ((Runnable)e.getKey()).run();
+            });
+            workQueue.removeAll(actions);
+        }
+
     }
 
 }

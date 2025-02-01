@@ -23,6 +23,7 @@ public class KaijuPacket {
     private int melee;
     private boolean percentageRandomizerFlag;
 
+
     private CompoundTag nbtData;
 
     public KaijuPacket() {}

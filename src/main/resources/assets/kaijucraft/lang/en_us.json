@@ -21,7 +21,10 @@
 
   "key.kaijucraft.gui_key": "Kombat Menu",
   "key.kaijucraft.transform_key": "Transform",
-
+  "key.kaijucraft.mobility_keybind": "Mobility",
+  "key.kaijucraft.dash": "Dash",
+  "key.kaijucraft.auto_sprint":  "Auto-Sprint",
+  "key.kaijucraft.donotchangethis": "Don't Change This",
 
   "key.categories.kaijucraft": "Kaiju Kraft",
 

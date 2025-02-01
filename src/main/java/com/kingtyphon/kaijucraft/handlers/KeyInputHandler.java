@@ -28,7 +28,7 @@ public class KeyInputHandler {
                 player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof CombatArmorItem) {
             Minecraft.getInstance().setScreen(new KaijuGui());
         }
-        if (event.getKey() == KaijuKeybinds.INSTANCE.tranform.getKey().getValue()) {
+        if (event.getKey() == KaijuKeybinds.INSTANCE.transform.getKey().getValue()) {
             Minecraft.getInstance().player.getCapability(KaijuProvider.KAIJU_CAPABILITY)
                     .ifPresent(cap -> cap.setTransformed(!cap.isTransformed()));
         }

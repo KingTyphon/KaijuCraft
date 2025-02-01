@@ -117,26 +117,7 @@ public class ModEvents {
             int wallRunDuration = kaijuLevel * 10 + 40; // Duration increases with Kaiju level
 
             // Check if player is against a wall and jumping
-            if (isNearWall(player) && isJumping(player) && player.onGround() == false) {
-                // Player is jumping near a wall, start or continue the wall run
-                if (wallRunStartTime == 0 || (mc.level.getGameTime() - wallRunStartTime) < wallRunDuration) {
-                    wallRunStartTime = mc.level.getGameTime(); // Start wall run
 
-                    // Apply wall run effect (e.g., prevent falling, keep velocity)
-                    Vec3 direction = player.getLookAngle();
-                    Vec3 velocity = player.getDeltaMovement();
-                    player.setDeltaMovement(velocity.add(direction.x * 0.1, 0.0, direction.z * 0.1)); // Small horizontal boost
-
-                    // Keep the player from falling
-                    if (player.getDeltaMovement().y < 0) {
-                        player.setDeltaMovement(player.getDeltaMovement().x, 0, player.getDeltaMovement().z);
-                    }
-                }
-            }
-            // Stop the wall run if player stops jumping or loses wall contact
-            else {
-                wallRunStartTime = 0; // End wall run
-            }
         });
 
     }
@@ -152,6 +133,28 @@ public class ModEvents {
         // Check if player is wearing the custom armor
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
         if (isWearingSpecialArmor(player)) {
+            int kaijuLevel = kaiju.getLevel();
+            int wallRunDuration = kaijuLevel * 10 + 40;
+            if (isNearWall(player) && isJumping(player) && player.onGround() == false) {
+                // Player is jumping near a wall, start or continue the wall run
+                if (wallRunStartTime == 0 || (mc.level.getGameTime() - wallRunStartTime) < wallRunDuration) {
+                    wallRunStartTime = mc.level.getGameTime(); // Start wall run
+
+                    // Apply wall run effect (e.g., prevent falling, keep velocity)
+                    Vec3 direction = player.getLookAngle();
+                    Vec3 velocity = player.getDeltaMovement();
+                    player.setDeltaMovement(velocity.add(direction.x * 0.1, 0.1, direction.z * 0.1)); // Small horizontal boost
+
+                    // Keep the player from falling
+                    if (player.getDeltaMovement().y < 0) {
+                        player.setDeltaMovement(player.getDeltaMovement().x, 0, player.getDeltaMovement().z);
+                    }
+                }
+            }
+            // Stop the wall run if player stops jumping or loses wall contact
+            else {
+                wallRunStartTime = 0; // End wall run
+            }
             // Check if the player is holding shift and pressing jump
             if (player.isCrouching() && mc.options.keyJump.isDown()) {
                 long currentTime = player.level().getGameTime(); // Get the current world time in ticks
@@ -181,5 +184,6 @@ public class ModEvents {
             CompoundTag nbt = capability.serializeNBT();
             ModMessages.send(new KaijuPacket(nbt), (ServerPlayer) event.getEntity());
         });
+
     }
 }
