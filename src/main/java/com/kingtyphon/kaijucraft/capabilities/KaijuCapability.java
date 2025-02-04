@@ -1,8 +1,11 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
+import com.kingtyphon.kaijucraft.networking.ModMessages;
+import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
@@ -26,6 +29,8 @@ public class KaijuCapability implements IKaijuCapability{
     private double wallside = 0.0;
     private boolean runningwall = false;
     private boolean dash = false;
+
+
 
     // Methods for handling wallrun capabilities (add to your existing methods)
     public void syncWallrunVariables(Entity entity) {

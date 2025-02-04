@@ -1,5 +1,6 @@
 package com.kingtyphon.kaijucraft.item.armor;
 
+import com.kingtyphon.kaijucraft.init.ItemInit;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,7 +30,14 @@ public class CombatArmorItem extends ArmorItem implements GeoItem {
         animationState.getController().setAnimation(RawAnimation.begin().then("idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
-
+    @Override
+    public boolean isRepairable(ItemStack stack) {
+        return true;
+    }
+    @Override
+    public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
+        return ingredient.getItem() == ItemInit.KAIJU_MUSCLE.get(); // Only Kaiju Muscle can repair
+    }
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer){
         consumer.accept(new IClientItemExtensions() {

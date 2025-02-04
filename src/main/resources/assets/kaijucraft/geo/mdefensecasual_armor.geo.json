@@ -7,8 +7,8 @@
 				"texture_width": 67,
 				"texture_height": 99,
 				"visible_bounds_width": 3,
-				"visible_bounds_height": 3.5,
-				"visible_bounds_offset": [0, 1.25, 0]
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
 			},
 			"bones": [
 				{
@@ -37,7 +37,7 @@
 				},
 				{
 					"name": "bipedRightArm",
-					"pivot": [-4, 22, 2]
+					"pivot": [-4, 22, 0]
 				},
 				{
 					"name": "armorRightArm",
@@ -50,7 +50,7 @@
 				},
 				{
 					"name": "bipedLeftArm",
-					"pivot": [4, 22, 2]
+					"pivot": [4, 22, 0]
 				},
 				{
 					"name": "armorLeftArm",

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GRG",
+    "GLG",
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gray_wool"
+    },
+    "R": {
+      "item": "minecraft:green_wool"
+    },
+    "L": {
+      "item": "minecraft:leather_chestplate"
+    }
+  },
+  "result": {
+    "item": "kaijucraft:mdefensecasual_chestplate",
+    "count": 1
+  },
+  "show_notification": true
+}

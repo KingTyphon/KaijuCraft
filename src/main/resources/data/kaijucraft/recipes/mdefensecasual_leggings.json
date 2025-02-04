@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GRG",
+    "GLG",
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gray_wool"
+    },
+    "R": {
+      "item": "minecraft:string"
+    },
+    "L": {
+      "item": "minecraft:leather_leggings"
+    }
+  },
+  "result": {
+    "item": "kaijucraft:mdefensecasual_leggings",
+    "count": 1
+  },
+  "show_notification": true
+}

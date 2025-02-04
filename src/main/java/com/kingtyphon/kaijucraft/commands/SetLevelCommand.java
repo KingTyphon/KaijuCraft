@@ -33,7 +33,7 @@ public class SetLevelCommand {
             capability.setLevel(level);
             //CompoundTag nbtdata = capability.serializeNBT();
             ModMessages.send(new KaijuPacket(capability),player);
-            player.sendSystemMessage(Component.translatable("Current Level set to " + level).withStyle(ChatFormatting.DARK_RED));
+            player.sendSystemMessage(Component.translatable("Current Level set to " + level).withStyle(ChatFormatting.DARK_BLUE));
         });
         return 1; // Command succeeded
     }

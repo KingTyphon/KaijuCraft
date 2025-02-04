@@ -45,6 +45,8 @@ public class ItemInit {
     //Spawn Eggs
     public static final RegistryObject<Item> KAIJU_NO8_SPAWN_EGG = ITEMS.register("kaiju_no8_spawn_egg", ()-> new Kaiju_No8_SpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> LARVA_SPAWN_EGG = ITEMS.register("larva_spawn_egg", ()-> new LarvaSpawnEgg(new Item.Properties()));
+    public static final RegistryObject<Item> KAIJU_MUSCLE = ITEMS.register("kaiju_muscle", ()-> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ROTTEN_KAIJU_MUSCLE = ITEMS.register("rotten_kaiju_muscle", ()-> new Item(new Item.Properties()));
 
     //Letters
     public static final RegistryObject<Item> ACCEPTANCELETTER = ITEMS.register("acceptanceletter", ()-> new AcceptanceLetterItem(new Item.Properties()));

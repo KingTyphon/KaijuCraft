@@ -82,7 +82,8 @@ public class KaijuPacket {
             if (context.getDirection().getReceptionSide().isServer()) {
                 ServerPlayer serverPlayer = context.getSender();
                 if (serverPlayer != null) {
-                    IKaijuCapability cap = serverPlayer.getCapability(KaijuProvider.KAIJU_CAPABILITY).orElseThrow(() -> new IllegalStateException("Kaiju Capability not found!"));
+                    IKaijuCapability cap = serverPlayer.getCapability(KaijuProvider.KAIJU_CAPABILITY)
+                            .orElseThrow(() -> new IllegalStateException("Kaiju Capability not found!"));
                     cap.deserializeNBT(packet.nbtData);
                 }
             }
@@ -90,8 +91,10 @@ public class KaijuPacket {
             else if (context.getDirection().getReceptionSide().isClient()) {
                 Player clientPlayer = Minecraft.getInstance().player;
                 if (clientPlayer != null) {
-                    IKaijuCapability cap = clientPlayer.getCapability(KaijuProvider.KAIJU_CAPABILITY).orElseThrow(() -> new IllegalStateException("Kaiju Capability not found!"));
-                    cap.deserializeNBT(packet.nbtData);
+                    clientPlayer.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(cap -> {
+                        cap.deserializeNBT(packet.nbtData);
+                        // Log or process the capability here if needed
+                    });
                 }
             }
         });

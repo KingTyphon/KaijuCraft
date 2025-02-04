@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GLG",
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:clay_ball"
+    },
+    "R": {
+      "item": "minecraft:black_wool"
+    },
+    "L": {
+      "item": "minecraft:leather_boots"
+    }
+  },
+  "result": {
+    "item": "kaijucraft:mdefensecasual_boots",
+    "count": 1
+  },
+  "show_notification": true
+}

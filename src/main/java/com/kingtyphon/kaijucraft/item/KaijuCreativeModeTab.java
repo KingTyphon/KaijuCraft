@@ -42,6 +42,8 @@ public class KaijuCreativeModeTab {
 
                         output.accept(ItemInit.KAIJU_NO8_SPAWN_EGG.get());
                         output.accept(ItemInit.LARVA_SPAWN_EGG.get());
+                        output.accept(ItemInit.KAIJU_MUSCLE.get());
+                        output.accept(ItemInit.ROTTEN_KAIJU_MUSCLE.get());
                         // Add other items here
                         output.accept(ItemInit.GLOCK17GEN4.get());
                     }).build());

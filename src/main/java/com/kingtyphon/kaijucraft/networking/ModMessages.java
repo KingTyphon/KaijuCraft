@@ -50,6 +50,11 @@ public class ModMessages {
                 .encoder(DNCTPacket::toBytes)
                 .consumerMainThread(DNCTPacket::handler)
                 .add();
+        net.messageBuilder(ParticleEffectPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ParticleEffectPacket::new)
+                .encoder(ParticleEffectPacket::toBytes)
+                .consumerMainThread(ParticleEffectPacket::handle)
+                .add();
         // You can continue registering other packets like this
 
 
@@ -62,5 +67,8 @@ public class ModMessages {
     public static <MSG> void send(MSG message, ServerPlayer player){
          INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
 
+    }
+    public static <MSG> void sendToAll(MSG message) {
+        INSTANCE.send(PacketDistributor.ALL.noArg(), message);
     }
 }
