@@ -58,7 +58,7 @@ public class PneumaticChainsawItem extends Item {
                 SimpleSoundInstance soundInstance = new SimpleSoundInstance(
                         KaijuSounds.CHAINSAW_ON.get(),       // Sound event
                         SoundSource.PLAYERS,                  // Sound source
-                        1.0F,                                 // Volume
+                        5.0F,                                 // Volume
                         1.0F,                                 // Pitch
                         random,                              // Random source
                         player.getX(), player.getY(), player.getZ()  // Position

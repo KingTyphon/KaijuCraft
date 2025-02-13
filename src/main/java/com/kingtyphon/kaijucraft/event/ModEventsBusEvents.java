@@ -5,6 +5,7 @@ import com.kingtyphon.kaijucraft.entity.client.Kaiju_no8Model;
 import com.kingtyphon.kaijucraft.entity.client.ModelLayers;
 import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
 import com.kingtyphon.kaijucraft.entity.kaiju.LarvaEntity;
+import com.kingtyphon.kaijucraft.entity.kaiju.PrimigeniusEntity;
 import com.kingtyphon.kaijucraft.init.EntityInit;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
@@ -26,6 +27,8 @@ public class ModEventsBusEvents {
     public static void registerAttributes (EntityAttributeCreationEvent event){
         event.put(EntityInit.KAIJU_NO8.get(), Kaiju_no8Entity.createAttributes().build());
         event.put(EntityInit.LARVA.get(), LarvaEntity.createAttributes().build());
+        event.put(EntityInit.PRIMIGENIUS.get(), PrimigeniusEntity.createAttributes().build());
+
     }
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event)

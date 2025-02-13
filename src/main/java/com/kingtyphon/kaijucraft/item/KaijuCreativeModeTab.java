@@ -1,6 +1,7 @@
 package com.kingtyphon.kaijucraft.item;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
+import com.kingtyphon.kaijucraft.init.BlockInit;
 import com.kingtyphon.kaijucraft.init.ItemInit;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -19,7 +20,7 @@ public class KaijuCreativeModeTab {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, KaijuCraft.MODID);
 
     public static final RegistryObject<CreativeModeTab> KAIJU_TAB = CREATIVE_MODE_TABS.register("kaiju_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.MDEFENSEFORMAL_CHESTPLATE.get()))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(BlockInit.KAIJU_PARTS.get()))
                     .title(Component.translatable("creativetab.kaiju_tab"))
                     .displayItems((displayParameters, output) -> {
                         // Armor - Formal Outfit
@@ -31,8 +32,10 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MDEFENSECASUAL_CHESTPLATE.get());
                         output.accept(ItemInit.MDEFENSECASUAL_LEGGINGS.get());
                         output.accept(ItemInit.MDEFENSECASUAL_BOOTS.get());
-                        output.accept(ItemInit.SIGSAUERSHORTRIFLE.get());
-                        output.accept(ItemInit.PNEUMATICCHAINSAW.get());
+                        output.accept(ItemInit.NHCLEANING_CHESTPLATE.get());
+                        output.accept(ItemInit.NHCLEANING_LEGGINGS.get());
+                        output.accept(ItemInit.NHCLEANING_BOOTS.get());
+                        output.accept(ItemInit.GAS_MASK.get());
 
                         // Armor - Combat Outfit
                         output.accept(ItemInit.MCOMBAT_HELMET.get());
@@ -40,12 +43,17 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MCOMBAT_LEGGINGS.get());
                         output.accept(ItemInit.MCOMBAT_BOOTS.get());
 
+                        output.accept(ItemInit.ENTRANCEEXAMLETTER.get());
                         output.accept(ItemInit.KAIJU_NO8_SPAWN_EGG.get());
+                        output.accept(ItemInit.PRIMIGENIUS_SPAWN_EGG.get());
                         output.accept(ItemInit.LARVA_SPAWN_EGG.get());
                         output.accept(ItemInit.KAIJU_MUSCLE.get());
                         output.accept(ItemInit.ROTTEN_KAIJU_MUSCLE.get());
                         // Add other items here
                         output.accept(ItemInit.GLOCK17GEN4.get());
+                        output.accept(ItemInit.SIGSAUERSHORTRIFLE.get());
+                        output.accept(ItemInit.PNEUMATICCHAINSAW.get());
+                        output.accept(ItemInit.TWINSWORD.get());
                     }).build());
 
     public static void register(IEventBus eventBus) {

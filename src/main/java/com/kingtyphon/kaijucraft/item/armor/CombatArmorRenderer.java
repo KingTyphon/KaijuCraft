@@ -9,6 +9,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 public class CombatArmorRenderer extends GeoArmorRenderer<CombatArmorItem> {
     public CombatArmorRenderer() {super(new CombatArmorModel());}
 
+
     public void prepForRender(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
         // Ensure this is properly implemented
         super.prepForRender(livingEntity, itemStack, equipmentSlot, original);

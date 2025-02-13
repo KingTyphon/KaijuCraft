@@ -11,10 +11,22 @@
   "item.kaijucraft.mcombat_chestplate": "Combat Shirt",
   "item.kaijucraft.mcombat_leggings": "Combat Pants",
 
+  "item.kaijucraft.nhcleaning_helmet": "Cleaning Mask",
+  "item.kaijucraft.nhcleaning_boots": "Cleaning Boots",
+  "item.kaijucraft.nhcleaning_chestplate": "Cleaning Shirt",
+  "item.kaijucraft.nhcleaning_leggings": "Cleaning Pants",
+  "item.kaijucraft.gas_mask": "Gas Mask",
+  "item.kaijucraft.entranceexamletter": "Exam Letter",
+
+
   "entity.kaijucraft.kaiju_no8": "Kaiju No.8",
+  "entity.kaijucraft.primigenius": "Primigenius",
+  "entity.kaijucraft.larva": "Larva",
 
   "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
+  "item.kaijucraft.twinsword" : "Twin Sword",
   "item.kaijucraft.kaiju_no8_spawn_egg": "Kaiju No.8 Spawn Egg",
+  "item.kaijucraft.primigenius_spawn_egg": "Primigenius Spawn Egg",
   "item.kaijucraft.larva_spawn_egg": "Larva Spawn Egg",
   "item.kaijucraft.sigsauershortrifle": "Sig Sauer Short Rifle",
   "item.kaijucraft.pneumatic_chainsaw": "Pneumatic Chainsaw",

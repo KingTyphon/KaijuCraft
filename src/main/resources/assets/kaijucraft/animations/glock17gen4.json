@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.glock17gen4.idle": {
+		"idle": {
 		}
 	},
 	"geckolib_format_version": 2

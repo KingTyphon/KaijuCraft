@@ -1,18 +1,19 @@
 package com.kingtyphon.kaijucraft.init;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.entity.animations.GunAnimation3rdPerson;
 import com.kingtyphon.kaijucraft.item.PneumaticChainsawItem;
 import com.kingtyphon.kaijucraft.item.armor.*;
+import com.kingtyphon.kaijucraft.item.eggs.Kaiju_No8_SpawnEgg;
+import com.kingtyphon.kaijucraft.item.eggs.LarvaSpawnEgg;
+import com.kingtyphon.kaijucraft.item.eggs.Primigenius_SpawnEgg;
 import com.kingtyphon.kaijucraft.item.exam.AcceptanceLetterItem;
 import com.kingtyphon.kaijucraft.item.exam.EntranceExamItem;
 import com.kingtyphon.kaijucraft.item.guns.Glock17Gen4;
 import com.kingtyphon.kaijucraft.item.guns.SigSauerShortRifleItem;
-import net.minecraft.client.Minecraft;
+import com.kingtyphon.kaijucraft.item.melee.TwinSwordItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,21 +38,28 @@ public class ItemInit {
     public static final RegistryObject<Item> MCOMBAT_BOOTS = ITEMS.register("mcombat_boots", ()-> new CombatArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.BOOTS, new Item.Properties()));
 
     public static final RegistryObject<Item> NHCLEANING_CHESTPLATE = ITEMS.register("nhcleaning_chestplate", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> NHCLEANING_LEGGINGS = ITEMS.register("nhcleaning_leggings", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> NHCLEANING_HELMET = ITEMS.register("nhcleaning_helmet", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> NHCLEANING_BOOTS = ITEMS.register("nhcleaning_boots", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final RegistryObject<Item> GAS_MASK = ITEMS.register("gas_mask", ()-> new GasMaskItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
+
     //Guns
     public static final RegistryObject<Item> GLOCK17GEN4 = ITEMS.register("glock17gen4", ()-> new Glock17Gen4(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SIGSAUERSHORTRIFLE = ITEMS.register("sigsauershortrifle", () -> new SigSauerShortRifleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
+    //Melee Weapons
+    public static final RegistryObject<Item> TWINSWORD = ITEMS.register("twinsword", ()-> new TwinSwordItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> PNEUMATICCHAINSAW = ITEMS.register("pneumatic_chainsaw", () ->(new PneumaticChainsawItem(new Item.Properties().stacksTo(1))));
     //Spawn Eggs
     public static final RegistryObject<Item> KAIJU_NO8_SPAWN_EGG = ITEMS.register("kaiju_no8_spawn_egg", ()-> new Kaiju_No8_SpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> LARVA_SPAWN_EGG = ITEMS.register("larva_spawn_egg", ()-> new LarvaSpawnEgg(new Item.Properties()));
+    public static final RegistryObject<Item> PRIMIGENIUS_SPAWN_EGG = ITEMS.register("primigenius_spawn_egg", ()-> new Primigenius_SpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> KAIJU_MUSCLE = ITEMS.register("kaiju_muscle", ()-> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ROTTEN_KAIJU_MUSCLE = ITEMS.register("rotten_kaiju_muscle", ()-> new Item(new Item.Properties()));
 
     //Letters
     public static final RegistryObject<Item> ACCEPTANCELETTER = ITEMS.register("acceptanceletter", ()-> new AcceptanceLetterItem(new Item.Properties()));
     public static final RegistryObject<Item> ENTRANCEEXAMLETTER = ITEMS.register("entranceexamletter", ()-> new EntranceExamItem(new Item.Properties()));
-
 
     public static void register(IEventBus bus){ITEMS.register(bus);}
 }

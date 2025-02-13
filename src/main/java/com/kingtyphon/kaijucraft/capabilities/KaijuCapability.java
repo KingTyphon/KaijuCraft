@@ -1,5 +1,6 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
+import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ public class KaijuCapability implements IKaijuCapability{
     private double wallside = 0.0;
     private boolean runningwall = false;
     private boolean dash = false;
-
+    private Kaiju_no8Entity entity ;
 
 
     // Methods for handling wallrun capabilities (add to your existing methods)
@@ -37,6 +38,15 @@ public class KaijuCapability implements IKaijuCapability{
         if (entity instanceof Player) {
             // Sync the new values for wallrun here, if needed
         }
+    }
+    @Override
+    public Kaiju_no8Entity getKaijuEntity(){
+        return this.entity;
+    }
+
+    @Override
+    public void setKaijuEntity(Kaiju_no8Entity entity) {
+        this.entity = entity;
     }
 
     // Getter and Setter for Wallrun variables

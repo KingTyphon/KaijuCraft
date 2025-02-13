@@ -11,6 +11,28 @@ public class UniformArmorRenderer extends GeoArmorRenderer<FormalArmorItem> {
         super(new UniformArmorModel());
     }
 
+    @Override
+    protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
+        this.setAllVisible(false);
+        switch (currentSlot) {
+            case HEAD:
+                break;
+            case CHEST:
+                this.setBoneVisible(this.head, true);
+                this.setBoneVisible(this.body, true);
+                this.setBoneVisible(this.rightArm, true);
+                this.setBoneVisible(this.leftArm, true);
+                break;
+            case LEGS:
+                this.setBoneVisible(this.rightLeg, true);
+                this.setBoneVisible(this.leftLeg, true);
+                break;
+            case FEET:
+                this.setBoneVisible(this.rightBoot, true);
+                this.setBoneVisible(this.leftBoot, true);
+        }
+
+    }
     public void prepForRender(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
         // Ensure this is properly implemented
         super.prepForRender(livingEntity, itemStack, equipmentSlot, original);
@@ -27,8 +49,8 @@ public class UniformArmorRenderer extends GeoArmorRenderer<FormalArmorItem> {
 
         // Show only the part that matches the equipped slot
         switch (equipmentSlot) {
-            case HEAD -> getGeoModel().getBone("head").ifPresent(bone -> bone.setHidden(false));
             case CHEST -> {
+                getGeoModel().getBone("head").ifPresent(bone -> bone.setHidden(false));
                 getGeoModel().getBone("body").ifPresent(bone -> bone.setHidden(false));
                 getGeoModel().getBone("rightArm").ifPresent(bone -> bone.setHidden(false));
                 getGeoModel().getBone("leftArm").ifPresent(bone -> bone.setHidden(false));

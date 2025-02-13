@@ -1,4 +1,4 @@
-package com.kingtyphon.kaijucraft.item.armor;
+package com.kingtyphon.kaijucraft.item.eggs;
 
 import com.kingtyphon.kaijucraft.init.EntityInit;
 import net.minecraft.core.BlockPos;
@@ -15,9 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class LarvaSpawnEgg extends Item {
+public class Kaiju_No8_SpawnEgg extends Item {
 
-    public LarvaSpawnEgg(Item.Properties pProperties) {
+    public Kaiju_No8_SpawnEgg(Properties pProperties) {
         super(pProperties);
     }
 
@@ -32,8 +32,9 @@ public class LarvaSpawnEgg extends Item {
                 BlockPos blockPos = hitResult.getBlockPos().relative(hitResult.getDirection());
 
                 // Spawn the custom entity
-                var entityType = EntityInit.LARVA.get();
+                var entityType = EntityInit.KAIJU_NO8.get();
                 var entity = entityType.spawn((ServerLevel) level, itemstack, player, blockPos, MobSpawnType.SPAWN_EGG, true, false);
+
                 if (entity != null) {
                     if (!player.getAbilities().instabuild) {
                         itemstack.shrink(1); // Consume one item

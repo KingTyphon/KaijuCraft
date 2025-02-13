@@ -30,6 +30,9 @@ public class ModItemModelProvider extends ItemModelProvider {
         simpleItem(ItemInit.MCOMBAT_CHESTPLATE);
 
         simpleItem(ItemInit.NHCLEANING_CHESTPLATE);
+        simpleItem(ItemInit.NHCLEANING_BOOTS);
+        simpleItem(ItemInit.NHCLEANING_LEGGINGS);
+        simpleItem(ItemInit.NHCLEANING_HELMET);
 
     }
     private ItemModelBuilder simpleItem(RegistryObject<Item> item) {

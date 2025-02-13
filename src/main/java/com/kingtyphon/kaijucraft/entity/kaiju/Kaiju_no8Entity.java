@@ -39,12 +39,11 @@ public class Kaiju_no8Entity extends Animal {
         super(pEntityType,plevel);
     }
 
-    private int idleAnimationTimeout = 0;
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState runAnimationState = new AnimationState();
     private int roarAnimationTimeout = 0;
-
     private int attackAnimationTimeout = 0;
+    private int idleAnimationTimeout = 0;
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState roarAnimationState = new AnimationState();
     private static final EntityDataAccessor<Boolean> IS_ROARING = SynchedEntityData.defineId(Kaiju_no8Entity.class, EntityDataSerializers.BOOLEAN);
@@ -62,10 +61,7 @@ public class Kaiju_no8Entity extends Animal {
     public boolean isAttacking() {
         return this.entityData.get(ATTACKING);
     }
-    public boolean isWalking(){
-        double speed = this.getDeltaMovement().horizontalDistance();
-        return speed > 0.1 && speed <= 0.6; // Speed range for walking
-    }
+
     public boolean isRoaring() {
         return this.entityData.get(IS_ROARING);
     }
@@ -95,29 +91,27 @@ public class Kaiju_no8Entity extends Animal {
             stopAllAnimationsExcept(attackAnimationState);
             attackAnimationTimeout = 40;
             attackAnimationState.start(this.tickCount);
-        }
-        if (isRoaring()) {
+        } else if (isRoaring()) {
             stopAllAnimationsExcept(roarAnimationState);
             roarAnimationState.start(this.tickCount);
             roarAnimationTimeout = 400;
-        }else {
-            --this.roarAnimationTimeout;
-        }
-        if (isSprinting() && !isWalking()) {
-            stopAllAnimationsExcept(runAnimationState);
-            runAnimationState.start(this.tickCount);
-        } else if (isWalking() && !isSprinting()) {
-            stopAllAnimationsExcept(null); // Stop other animations without starting a new one
-        } else if (attackAnimationTimeout <= 0 && roarAnimationTimeout <=0) {
-            // Start idle animation only when no other animations are active
-            if (!idleAnimationState.isStarted()) {
+        } else {
+            // If no other animations are active, play idle animation
+            if (idleAnimationTimeout <= 0) {
+                stopAllAnimationsExcept(idleAnimationState);
                 idleAnimationState.start(this.tickCount);
+                idleAnimationTimeout = this.random.nextInt(40) + 80;
+            } else {
+                --idleAnimationTimeout;
             }
         }
 
-        // Decrease attack animation timeout
+        // Decrease animation timeouts
         if (attackAnimationTimeout > 0) {
             attackAnimationTimeout--;
+        }
+        if (roarAnimationTimeout > 0) {
+            roarAnimationTimeout--;
         }
     }
 
@@ -206,7 +200,7 @@ public class Kaiju_no8Entity extends Animal {
 
         @Override
         public boolean canUse() {
-            return !this.entity.isAttacking() && this.entity.getRandom().nextInt(100) == 0 && entity.roarAnimationTimeout <= 0;
+            return !this.entity.isAttacking() && this.entity.getRandom().nextInt(1000) == 0 && entity.roarAnimationTimeout <= 0;
         }
 
         @Override

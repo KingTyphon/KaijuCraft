@@ -1,6 +1,7 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
 
+import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
@@ -9,6 +10,8 @@ public interface IKaijuCapability {
     public boolean getAutoSprint();
     public void setAutoSprint(boolean autoSprint);
     public double getWallrunning();
+    public Kaiju_no8Entity getKaijuEntity();
+    public void setKaijuEntity(Kaiju_no8Entity entity);
     public void setWallrunning(double wallrunning);
     public double getWallside();
     public void setWallside(double wallside);

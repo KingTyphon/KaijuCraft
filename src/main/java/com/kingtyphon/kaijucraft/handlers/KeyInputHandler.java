@@ -23,6 +23,9 @@ public class KeyInputHandler {
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
+        if (Minecraft.getInstance().player == null) {
+            return;
+        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (event.getKey() == KaijuKeybinds.INSTANCE.kaijuGui.getKey().getValue() && player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof CombatArmorItem && player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof CombatArmorItem &&
                 player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof CombatArmorItem) {

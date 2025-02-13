@@ -52,6 +52,12 @@
     "sounds": [
       "kaijucraft:chainsaw_sound"
     ]
+  },
+  "gunshot": {
+    "subtitles": "sounds.kaijucraft.gunshot",
+    "sounds": [
+      "kaijucraft:gunshot"
+    ]
   }
 
 }
