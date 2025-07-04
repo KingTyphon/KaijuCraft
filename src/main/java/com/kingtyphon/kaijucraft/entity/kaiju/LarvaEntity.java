@@ -26,7 +26,7 @@ public class LarvaEntity extends Animal implements GeoEntity {
         super(pEntityType, pLevel);
     }
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0).add(Attributes.ATTACK_DAMAGE, 1.0);
     }
     @Override
     protected void registerGoals(){

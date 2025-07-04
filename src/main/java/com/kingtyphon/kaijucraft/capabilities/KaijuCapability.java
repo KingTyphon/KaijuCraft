@@ -1,6 +1,7 @@
 package com.kingtyphon.kaijucraft.capabilities;
 
 import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
+import com.kingtyphon.kaijucraft.init.EntityInit;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
 import net.minecraft.core.BlockPos;
@@ -11,6 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class KaijuCapability implements IKaijuCapability{
 
@@ -26,6 +29,9 @@ public class KaijuCapability implements IKaijuCapability{
     private boolean percentageRandomizerFlag;
     private boolean transform;
     private boolean autoSprint = false;
+    private boolean isShooting = false;
+    private boolean isReloading = false;
+
     private double wallrunning = 0.0;
     private double wallside = 0.0;
     private boolean runningwall = false;
@@ -39,6 +45,7 @@ public class KaijuCapability implements IKaijuCapability{
             // Sync the new values for wallrun here, if needed
         }
     }
+
     @Override
     public Kaiju_no8Entity getKaijuEntity(){
         return this.entity;
@@ -48,7 +55,25 @@ public class KaijuCapability implements IKaijuCapability{
     public void setKaijuEntity(Kaiju_no8Entity entity) {
         this.entity = entity;
     }
+    @Override
+    public boolean isReloading() {
+        return isReloading;
+    }
 
+    @Override
+    public void setReloading(boolean isReloading) {
+        this.isReloading = isReloading;
+    }
+
+    @Override
+    public boolean isShooting() {
+        return isShooting;
+    }
+
+    @Override
+    public void setShooting(boolean isShooting) {
+        this.isShooting = isShooting;
+    }
     // Getter and Setter for Wallrun variables
     public boolean getAutoSprint() {
         return autoSprint;
@@ -96,8 +121,8 @@ public class KaijuCapability implements IKaijuCapability{
 
         if(this.level < 99){
             if(this.xp == maxXp || this.xp >= maxXp ) {
-            this.maxXp = 100 + (150*level);
-            this.xp = 0;
+            this.setMaxXp( 100 + (50*level));
+            this.setXP(0);
             this.level +=1;
             for (int threshold : percentageThresholds) {
                 if (this.level == threshold) {
@@ -235,6 +260,9 @@ public class KaijuCapability implements IKaijuCapability{
         this.wallside = player.getWallside();
         this.runningwall = player.isRunningwall();
         this.dash = player.isDash();
+        this.isReloading = player.isReloading();
+        this.isShooting = player.isShooting();
+
     }
 
     @Override
@@ -275,6 +303,8 @@ public class KaijuCapability implements IKaijuCapability{
         tag.putDouble("WallSide", this.wallside);
         tag.putBoolean("RunningWall", this.runningwall);
         tag.putBoolean("Dash", this.dash);
+        tag.putBoolean("Reloading", this.isReloading);
+        tag.putBoolean("Shooting", this.isShooting);
 
         return tag;
     }

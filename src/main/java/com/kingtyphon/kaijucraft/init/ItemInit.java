@@ -6,10 +6,13 @@ import com.kingtyphon.kaijucraft.item.armor.*;
 import com.kingtyphon.kaijucraft.item.eggs.Kaiju_No8_SpawnEgg;
 import com.kingtyphon.kaijucraft.item.eggs.LarvaSpawnEgg;
 import com.kingtyphon.kaijucraft.item.eggs.Primigenius_SpawnEgg;
+import com.kingtyphon.kaijucraft.item.eggs.TrichonephilaSpawnEgg;
 import com.kingtyphon.kaijucraft.item.exam.AcceptanceLetterItem;
 import com.kingtyphon.kaijucraft.item.exam.EntranceExamItem;
+import com.kingtyphon.kaijucraft.item.guns.Cannon;
 import com.kingtyphon.kaijucraft.item.guns.Glock17Gen4;
 import com.kingtyphon.kaijucraft.item.guns.SigSauerShortRifleItem;
+import com.kingtyphon.kaijucraft.item.melee.BattleAxeItem;
 import com.kingtyphon.kaijucraft.item.melee.TwinSwordItem;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -32,6 +35,11 @@ public class ItemInit {
     public static final RegistryObject<Item> MDEFENSECASUAL_CHESTPLATE = ITEMS.register("mdefensecasual_chestplate", ()-> new CasualArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
     public static final RegistryObject<Item> MDEFENSECASUAL_BOOTS = ITEMS.register("mdefensecasual_boots", ()-> new CasualArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.BOOTS, new Item.Properties()));
 
+    public static final RegistryObject<Item> SKELLYKAIJU_HELMET = ITEMS.register("skellykaiju_helmet", ()-> new SkellyKaijuArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> SKELLYKAIJU_LEGGINGS = ITEMS.register("skellykaiju_leggings", ()-> new SkellyKaijuArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final RegistryObject<Item> SKELLYKAIJU_CHESTPLATE = ITEMS.register("skellykaiju_chestplate", ()-> new SkellyKaijuArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> SKELLYKAIJU_BOOTS = ITEMS.register("skellykaiju_boots", ()-> new SkellyKaijuArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.BOOTS, new Item.Properties()));
+
     public static final RegistryObject<Item> MCOMBAT_HELMET = ITEMS.register("mcombat_helmet", ()-> new CombatArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final RegistryObject<Item> MCOMBAT_LEGGINGS = ITEMS.register("mcombat_leggings", ()-> new CombatArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> MCOMBAT_CHESTPLATE = ITEMS.register("mcombat_chestplate", ()-> new CombatArmorItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
@@ -41,21 +49,27 @@ public class ItemInit {
     public static final RegistryObject<Item> NHCLEANING_LEGGINGS = ITEMS.register("nhcleaning_leggings", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.LEGGINGS, new Item.Properties()));
     public static final RegistryObject<Item> NHCLEANING_HELMET = ITEMS.register("nhcleaning_helmet", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final RegistryObject<Item> NHCLEANING_BOOTS = ITEMS.register("nhcleaning_boots", ()-> new NHCleaningItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.BOOTS, new Item.Properties()));
-    public static final RegistryObject<Item> GAS_MASK = ITEMS.register("gas_mask", ()-> new GasMaskItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final RegistryObject<Item> GAS_MASK = ITEMS.register("respirator_mask", ()-> new GasMaskItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.HELMET, new Item.Properties()));
 
     //Guns
-    public static final RegistryObject<Item> GLOCK17GEN4 = ITEMS.register("glock17gen4", ()-> new Glock17Gen4(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BATTLEAXE = ITEMS.register("battleaxe", ()-> new BattleAxeItem(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> GLOCK17GEN4 = ITEMS.register("glock17", ()-> new Glock17Gen4(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SIGSAUERSHORTRIFLE = ITEMS.register("sigsauershortrifle", () -> new SigSauerShortRifleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> CANNON = ITEMS.register("cannon", () -> new Cannon(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
     //Melee Weapons
     public static final RegistryObject<Item> TWINSWORD = ITEMS.register("twinsword", ()-> new TwinSwordItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> PNEUMATICCHAINSAW = ITEMS.register("pneumatic_chainsaw", () ->(new PneumaticChainsawItem(new Item.Properties().stacksTo(1))));
     //Spawn Eggs
+    public static final RegistryObject<Item> TRICHONEPHILA_SPAWN_EGG = ITEMS.register("trichonephila_spawn_egg", ()-> new TrichonephilaSpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> KAIJU_NO8_SPAWN_EGG = ITEMS.register("kaiju_no8_spawn_egg", ()-> new Kaiju_No8_SpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> LARVA_SPAWN_EGG = ITEMS.register("larva_spawn_egg", ()-> new LarvaSpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> PRIMIGENIUS_SPAWN_EGG = ITEMS.register("primigenius_spawn_egg", ()-> new Primigenius_SpawnEgg(new Item.Properties()));
     public static final RegistryObject<Item> KAIJU_MUSCLE = ITEMS.register("kaiju_muscle", ()-> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ROTTEN_KAIJU_MUSCLE = ITEMS.register("rotten_kaiju_muscle", ()-> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> GUNSLING = ITEMS.register("gunsling", ()-> new GunSlingItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final RegistryObject<Item> GUNINHOLSTER = ITEMS.register("guninholster", ()-> new GunInHolsterItem(KaijuArmorMaterial.KAIJU, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
 
     //Letters
     public static final RegistryObject<Item> ACCEPTANCELETTER = ITEMS.register("acceptanceletter", ()-> new AcceptanceLetterItem(new Item.Properties()));

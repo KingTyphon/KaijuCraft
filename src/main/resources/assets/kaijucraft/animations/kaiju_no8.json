@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.model.idle": {
+		"animation.kaijuno8.idle": {
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -189,7 +189,7 @@
 				}
 			}
 		},
-		"animation.model.walk": {
+		"animation.kaijuno8.walk": {
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -607,7 +607,7 @@
 				}
 			}
 		},
-		"animation.model.sprint": {
+		"animation.kaijuno8.run": {
 			"loop": true,
 			"animation_length": 0.8488,
 			"bones": {
@@ -1022,7 +1022,7 @@
 				}
 			}
 		},
-		"animation.model.roar": {
+		"animation.kaijuno8.roar": {
 			"animation_length": 1.8333,
 			"bones": {
 				"Head": {
@@ -1729,7 +1729,7 @@
 				}
 			}
 		},
-		"animation.model.swing": {
+		"animation.kaijuno8.attack": {
 			"animation_length": 1.2917,
 			"bones": {
 				"Kafka": {

@@ -7,6 +7,10 @@ import net.minecraft.world.entity.Entity;
 
 public interface IKaijuCapability {
     public void syncWallrunVariables(Entity entity);
+    public void setReloading(boolean isReloading);
+    public void setShooting(boolean isShooting);
+    public boolean isShooting();
+    public boolean isReloading();
     public boolean getAutoSprint();
     public void setAutoSprint(boolean autoSprint);
     public double getWallrunning();

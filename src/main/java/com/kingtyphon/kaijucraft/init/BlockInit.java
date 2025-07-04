@@ -2,6 +2,7 @@ package com.kingtyphon.kaijucraft.init;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
 import com.kingtyphon.kaijucraft.block.KaijuPartsBlock;
+import com.kingtyphon.kaijucraft.block.KingTyphonPopBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -22,6 +23,8 @@ public class BlockInit {
             DeferredRegister.create(ForgeRegistries.BLOCKS, KaijuCraft.MODID);
     public static final RegistryObject<Block> KAIJU_PARTS = registerBlock("kaiju_parts",
             () -> new KaijuPartsBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.SLIME_BLOCK)));
+    public static final RegistryObject<Block> KINGTYPHON_POP = registerBlock("kingtyphon_pop",
+            () -> new KingTyphonPopBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).sound(SoundType.FUNGUS)));
 
 private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
     RegistryObject<T> toReturn = BLOCKS.register(name, block);

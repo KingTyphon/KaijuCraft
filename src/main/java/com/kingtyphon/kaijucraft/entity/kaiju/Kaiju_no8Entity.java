@@ -1,10 +1,9 @@
 package com.kingtyphon.kaijucraft.entity.kaiju;
 
-import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.entity.client.Kaiju_no8Model;
-import com.kingtyphon.kaijucraft.networking.KaijuHelper;
-import com.kingtyphon.kaijucraft.networking.ModMessages;
+
 import com.kingtyphon.kaijucraft.sound.KaijuSounds;
+import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,7 +12,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -27,18 +25,65 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.PacketDistributor;
+
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Kaiju_no8Entity extends Animal {
+public class Kaiju_no8Entity extends Animal implements GeoEntity {
+    private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     public Kaiju_no8Entity(EntityType<? extends Animal> pEntityType, Level plevel){
         super(pEntityType,plevel);
     }
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar){
+        controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    }
+    private <T extends GeoAnimatable> PlayState predicate(software.bernie.geckolib.core.animation.AnimationState<T> tAnimationState) {
+        AnimationController<T> controller = tAnimationState.getController();
+        if (this.getVehicle() instanceof Player player) {
+            double speed = player.getDeltaMovement().horizontalDistance();
 
+            if (speed > 0.1) {
+                controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
+            } else {
+                controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
+            }
+        }
+
+        if (this.isRoaring()) {
+            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.roar", Animation.LoopType.PLAY_ONCE));
+            return PlayState.CONTINUE;
+        } else if (this.isAttacking()) {
+            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.attack", Animation.LoopType.PLAY_ONCE));
+            return PlayState.CONTINUE;
+        }else if (this.isSprinting()) {
+            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.run", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }else if (tAnimationState.isMoving()) {
+            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.walk", Animation.LoopType.LOOP));
+            return PlayState.CONTINUE;
+        }
+
+        controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache(){
+        return cache;
+    }
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState runAnimationState = new AnimationState();
     private int roarAnimationTimeout = 0;
@@ -54,6 +99,7 @@ public class Kaiju_no8Entity extends Animal {
         super.defineSynchedData();
         this.entityData.define(IS_ROARING, false);
         this.entityData.define(ATTACKING, false);
+        this.entityData.define(OWNER, ""); // Default to empty string
     }
     public void setAttacking(boolean attacking){
         this.entityData.set(ATTACKING, attacking);
@@ -69,64 +115,41 @@ public class Kaiju_no8Entity extends Animal {
     public void setRoaring(boolean roaring) {
         this.entityData.set(IS_ROARING, roaring);
     }
+    private static final EntityDataAccessor<String> OWNER = SynchedEntityData.defineId(Kaiju_no8Entity.class, EntityDataSerializers.STRING);
+
+
+    public void setOwner(Player player) {
+        this.entityData.set(OWNER, player.getUUID().toString());
+    }
+
+    @Nullable
+    public UUID getOwnerUUID() {
+        String uuidString = this.entityData.get(OWNER);
+        return uuidString.isEmpty() ? null : UUID.fromString(uuidString);
+    }
+
+
+
+
+
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         super.tick();
 
-        if(this.level().isClientSide()){
-            setupAnimationStates();
-        }
-        // Trigger roar animation when low health
-        if (this.isRoaring() && this.tickCount % 40 == 0) { // Adjust tick duration as needed
+        // Reset roar animation after some time
+        if (this.isRoaring() && this.tickCount % 40 == 0) {
             this.setRoaring(false);
         }
 
-    }
-
-    private void setupAnimationStates() {
-        // Stop idle animation if any other animations are active
-        if (isAttacking()) {
-            stopAllAnimationsExcept(attackAnimationState);
-            attackAnimationTimeout = 40;
-            attackAnimationState.start(this.tickCount);
-        } else if (isRoaring()) {
-            stopAllAnimationsExcept(roarAnimationState);
-            roarAnimationState.start(this.tickCount);
-            roarAnimationTimeout = 400;
-        } else {
-            // If no other animations are active, play idle animation
-            if (idleAnimationTimeout <= 0) {
-                stopAllAnimationsExcept(idleAnimationState);
-                idleAnimationState.start(this.tickCount);
-                idleAnimationTimeout = this.random.nextInt(40) + 80;
-            } else {
-                --idleAnimationTimeout;
-            }
-        }
-
-        // Decrease animation timeouts
-        if (attackAnimationTimeout > 0) {
-            attackAnimationTimeout--;
-        }
-        if (roarAnimationTimeout > 0) {
-            roarAnimationTimeout--;
+        // Reset attack animation after some time
+        if (this.isAttacking() && this.tickCount % 20 == 0) {
+            this.setAttacking(false);
         }
     }
 
-    private void stopAllAnimationsExcept(@Nullable AnimationState activeState) {
-        if (activeState != idleAnimationState) idleAnimationState.stop();
-        if (activeState != runAnimationState) runAnimationState.stop();
-        if (activeState != attackAnimationState) attackAnimationState.stop();
-        if (activeState != roarAnimationState) roarAnimationState.stop();
-    }
-    @Override
-    protected void updateWalkAnimation(float pPartialTick){
-        double speed = this.getDeltaMovement().horizontalDistance();
-        float f = Math.min((float) (speed * 10f), 1f); // Scale movement speed to animation progress
-        this.walkAnimation.update(f, 0.2f);
-    }
+
+
     @Override
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -140,8 +163,8 @@ public class Kaiju_no8Entity extends Animal {
 
     public static AttributeSupplier.Builder createAttributes() {
             return Animal.createLivingAttributes()
-                    .add(Attributes.MAX_HEALTH, 50D)
-                    .add(Attributes.ATTACK_DAMAGE, 10.0f)
+                    .add(Attributes.MAX_HEALTH, 300D)
+                    .add(Attributes.ATTACK_DAMAGE, 20.0f)
                     .add(Attributes.ATTACK_SPEED, 1.0f)
                     .add(Attributes.MOVEMENT_SPEED, 0.6f)
                     .add(Attributes.FOLLOW_RANGE, 40.0D)

@@ -30,21 +30,22 @@ public class AcceptanceLetterItem extends Item {
             if (chance <= 7) {
                 kapability.setLevel(randomCombatPower(0, 4)); // range for 0%-4% CPP
             }
-            if ( chance <= 97 || chance > 7) {
+            if ( chance <= 97 && chance > 7) {
                 kapability.setLevel(randomCombatPower(5, 20)); // range for 0%-4% CPP
             }
-            if (chance <= 107 || chance> 97) {
+            if (chance <= 107 && chance> 97) {
                 kapability.setLevel(randomCombatPower(21, 39)); // range for 21%-39% CPP
             }
-            if (chance <= 112 || chance> 97) {
+            if (chance <= 112 && chance> 97) {
                 kapability.setLevel(randomCombatPower(40 , 50)); // range for 0%-4% CPP
             }
             kapability.setSP(getSPChange(kapability.getLevel()));
             kapability.setXP(0);
+            kapability.setMaxXp( 100 + (50*kapability.getLevel()));
             kapability.setMelee(0);
             kapability.setMind(0);
             kapability.setRange(0);
-            ModMessages.send(new KaijuPacket(kapability), (ServerPlayer) pPlayer);
+            ModMessages.sendToServer(new KaijuPacket(kapability));
 
                     //Changes the flag for being a Kaiju Defense Force Member
 

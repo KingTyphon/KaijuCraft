@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "kaijucraft:tachikawabase",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 446981001,
+    "spacing": 1000,
+    "separation": 500,
+    "type": "minecraft:random_spread"
+  }
+}

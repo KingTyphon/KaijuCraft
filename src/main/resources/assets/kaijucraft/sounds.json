@@ -11,6 +11,18 @@
       "kaijucraft:kaiju_no8_growl2"
     ]
   },
+  "axeswoosh": {
+    "subtitles": "sounds.kaijucraft.axeswoosh",
+    "sounds":[
+      "kaijucraft:axeswoosh"
+    ]
+  },
+  "sword": {
+    "subtitles": "sounds.kaijucraft.sword",
+    "sounds":[
+      "kaijucraft:sword"
+    ]
+  },
   "kaiju_no8_growl3": {
     "subtitles": "sounds.kaijucraft.kaiju_no8_growl3",
     "sounds":[

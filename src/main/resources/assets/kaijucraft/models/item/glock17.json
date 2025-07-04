@@ -1,0 +1,118 @@
+{
+  "parent": "builtin/entity",
+  "texture_size": [
+    260,
+    326
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [
+        0,
+        -5,
+        2
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        0,
+        -5,
+        2
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        5.93,
+        -11,
+        -0.36
+      ],
+      "translation": [
+        -1,
+        -5,
+        1.75
+      ],
+      "scale": [
+        1.45,
+        1.45,
+        1.45
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        5.93,
+        -11,
+        -0.36
+      ],
+      "translation": [
+        -1,
+        -5,
+        1.75
+      ],
+      "scale": [
+        1.45,
+        1.45,
+        1.45
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        -93
+      ],
+      "translation": [
+        -5.75,
+        -2.5,
+        2.75
+      ],
+      "scale": [
+        1.13,
+        1.13,
+        1.13
+      ]
+    },
+    "gui": {
+      "rotation": [
+        82,
+        -69,
+        82
+      ],
+      "translation": [
+        -1.5,
+        -9.75,
+        0.25
+      ],
+      "scale": [
+        1.63,
+        1.63,
+        1.63
+      ]
+    },
+    "head": {
+      "translation": [
+        0,
+        0,
+        1.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        82,
+        -69,
+        82
+      ],
+      "translation": [
+        -0.75,
+        -10.5,
+        0.25
+      ],
+      "scale": [
+        1.9,
+        1.9,
+        1.9
+      ]
+    }
+  },
+  "textures": {
+    "particle": "item/glock17"
+  }
+}

@@ -90,11 +90,17 @@ public class KaijuCraft
 
     }
 
-    private void onClientSetup(FMLClientSetupEvent event)
-    {
+    private void onClientSetup(FMLClientSetupEvent event) {
         //MinecraftForge.EVENT_BUS.register(new ClientForgeHandler());
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animation"), 42, KaijuCraft::registerPlayerAnimation);
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animationmelee"), 41, KaijuCraft::registerPlayerAnimation);
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animationaxe"), 41, KaijuCraft::registerPlayerAnimation);
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animationcannon"), 41, KaijuCraft::registerPlayerAnimation);
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animationglock"), 41, KaijuCraft::registerPlayerAnimation);
+        PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(new ResourceLocation(MODID, "animationsigsauer"), 41, KaijuCraft::registerPlayerAnimation);
+
+
     }
 
     @SubscribeEvent
@@ -119,7 +125,7 @@ public class KaijuCraft
             EntityRenderers.register(EntityInit.LARVA.get(), LarvaRenderer::new);
             EntityRenderers.register(EntityInit.KAIJU_PART.get(), KaijuPartRender::new);
             EntityRenderers.register(EntityInit.PRIMIGENIUS.get(), PrimigeniusRenderer::new);
-
+            EntityRenderers.register(EntityInit.TRICHONEPHILA.get(), TrichonephilaRenderer::new);
             CustomRenderRegistry.init();
         }
         @SubscribeEvent

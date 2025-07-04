@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RCI",
+    "GIC",
+    "GGR"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "kaijucraft:pneumatic_chainsaw",
+    "count": 1
+  },
+  "show_notification": true
+}

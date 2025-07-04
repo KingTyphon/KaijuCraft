@@ -31,11 +31,35 @@ public final class KaijuKeybinds {
             InputConstants.getKey(InputConstants.KEY_F, 1),
             CATEGORY
     );
+    public final KeyMapping reload = new KeyMapping(
+            "key." + KaijuCraft.MODID + ".reload",
+            KeyConflictContext.IN_GAME,
+            InputConstants.getKey(InputConstants.KEY_R, 1),
+            CATEGORY
+    );
+    public final KeyMapping emote = new KeyMapping(
+            "key." + KaijuCraft.MODID + ".emote",
+            KeyConflictContext.IN_GAME,
+            InputConstants.getKey(InputConstants.KEY_L, 1),
+            CATEGORY
+    );
+    public final KeyMapping ammoChange = new KeyMapping(
+            "key." + KaijuCraft.MODID + ".ammo_change",
+            KeyConflictContext.IN_GAME,
+            InputConstants.getKey(InputConstants.KEY_L, 1),
+            CATEGORY
+    );
 
     public final KeyMapping transform = new KeyMapping(
             "key." + KaijuCraft.MODID + ".transform_key",
             KeyConflictContext.IN_GAME,
-            InputConstants.getKey(InputConstants.KEY_P, 2),
+            InputConstants.getKey(InputConstants.KEY_EQUALS, 2),
+            CATEGORY
+    );
+    public final KeyMapping gasmask = new KeyMapping(
+            "key." + KaijuCraft.MODID + ".gasmask_key",
+            KeyConflictContext.IN_GAME,
+            InputConstants.getKey(InputConstants.KEY_V, 2),
             CATEGORY
     );
 
@@ -64,8 +88,7 @@ public final class KaijuKeybinds {
     public final KeyMapping donotchangethis = new KeyMapping(
             "key.kaijucraft.donotchangethis",
             KeyConflictContext.IN_GAME,
-            InputConstants.getKey(InputConstants.KEY_W, 6),
-            CATEGORY
+            InputConstants.getKey(InputConstants.KEY_W, 6),CATEGORY
     );
 
     @SubscribeEvent
@@ -73,6 +96,8 @@ public final class KaijuKeybinds {
         event.register(INSTANCE.kaijuGui);
         event.register(INSTANCE.transform);
         event.register(INSTANCE.mobilityKeybind);
+        event.register(INSTANCE.gasmask);
+        event.register(INSTANCE.reload);
         event.register(INSTANCE.dash);
         event.register(INSTANCE.autoSprint);
         event.register(INSTANCE.donotchangethis);
@@ -83,6 +108,7 @@ public final class KaijuKeybinds {
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             Minecraft mc = Minecraft.getInstance();
+            if (mc.player == null || mc.screen != null) return; // Ignore when GUI is open
             if (mc.player != null) {
                 if (INSTANCE.mobilityKeybind.isDown()) {
                     ModMessages.sendToServer(new MobilityKeybindPacket(0, 0));

@@ -15,9 +15,7 @@ public class EntranceExamItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 
-        pPlayer.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kapability ->{
-            //This enables the flag that allows them to get their percentage
-        });
+
         return super.use(pLevel, pPlayer, pUsedHand);
 
     }

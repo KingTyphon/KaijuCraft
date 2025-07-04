@@ -23,17 +23,22 @@ public class KaijuPartRender extends EntityRenderer<KaijuPartEntity> {
         this.model = new KaijuPartModel(pContext.bakeLayer(ModelLayers.KAIJUPARTS));
 
     }
-
     @Override
     public void render(KaijuPartEntity entity, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
         matrixStack.pushPose();
+
+        // Translate slightly downward (adjust value as needed)
+        matrixStack.translate(0.0F, 1.5F, 0.0F);
+
+        // Rotate 180 degrees around the X-axis
+        matrixStack.mulPose(Axis.XP.rotationDegrees(180));
+
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutout(TEXTURE));
         model.renderToBuffer(matrixStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        matrixStack.popPose();
 
+        matrixStack.popPose();
         super.render(entity, yaw, partialTicks, matrixStack, buffer, packedLight);
     }
-
     @Override
     public ResourceLocation getTextureLocation(KaijuPartEntity entity) {
         return TEXTURE;

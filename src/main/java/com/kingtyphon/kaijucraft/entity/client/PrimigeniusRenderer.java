@@ -37,7 +37,7 @@ public class PrimigeniusRenderer extends MobRenderer<PrimigeniusEntity, Primigen
     @Override
     public void render(PrimigeniusEntity entity, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
 
-
+        matrixStack.scale(1.5F,1.5F,1.5F);
         super.render(entity, yaw, partialTicks, matrixStack, buffer, packedLight);
     }
 

@@ -1,9 +1,13 @@
 package com.kingtyphon.kaijucraft.item;
 
+import com.kingtyphon.kaijucraft.entity.kaiju.KaijuPartEntity;
+import com.kingtyphon.kaijucraft.init.ItemInit;
 import com.kingtyphon.kaijucraft.sound.KaijuSounds;
+import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,6 +22,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,7 +31,13 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.kingtyphon.kaijucraft.event.ModEvents.setPlayerEmoting;
 
 public class PneumaticChainsawItem extends Item {
 
@@ -56,19 +68,44 @@ public class PneumaticChainsawItem extends Item {
                 // Play looping sound on the client side
                 RandomSource random = world.getRandom();
                 SimpleSoundInstance soundInstance = new SimpleSoundInstance(
-                        KaijuSounds.CHAINSAW_ON.get(),       // Sound event
+                        KaijuSounds.CHAINSAW_ON.get().getLocation(),       // Sound event
                         SoundSource.PLAYERS,                  // Sound source
-                        5.0F,                                 // Volume
+                        10.0F,                                 // Volume
                         1.0F,                                 // Pitch
-                        random,                              // Random source
-                        player.getX(), player.getY(), player.getZ()  // Position
+                        random,true, 0, SoundInstance.Attenuation.LINEAR,// Random source
+                        player.getX(), player.getY(), player.getZ(), false  // Position
                 );
 
                 Minecraft.getInstance().getSoundManager().play(soundInstance);
             }
         }
-        player.startUsingItem(hand); // Keeps item active while holding
 
+        // **Get the direction the player is facing**
+        Vec3 direction = player.getViewVector(1.0F); // Gets the forward direction
+        BlockPos playerPos = player.blockPosition();
+        // **Calculate the search range in front of the player**
+        double range = 1.0; // Set the range to 1 block ahead of the player
+        AABB searchBox = new AABB(playerPos.offset((int) (direction.x * range), (int) (direction.y * range), (int) (direction.z * range)))
+                .inflate(1.0); // Inflates slightly in all directions
+
+        // **Detect KaijuPartEntities within the search box**
+        List<Entity> entities = world.getEntities(player, searchBox, entity -> entity instanceof KaijuPartEntity);
+
+        if (!entities.isEmpty()) {
+            if (!world.isClientSide) {
+                // For each KaijuPartEntity detected
+                for (Entity entity : entities) {
+                    if (entity instanceof KaijuPartEntity kaijuPart) {
+                        // Kill the KaijuPartEntity
+                        kaijuPart.kill();
+                        // Give Kaiju Muscle item to the player
+                        player.addItem(new ItemStack(ItemInit.KAIJU_MUSCLE.get()));
+                    }
+                }
+            }
+        }
+
+        player.startUsingItem(hand); // Keeps item active while holding
         return InteractionResultHolder.fail(stack);
     }
 

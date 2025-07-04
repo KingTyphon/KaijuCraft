@@ -1,7 +1,7 @@
 package com.kingtyphon.kaijucraft.networking.packets;
 
-import com.kingtyphon.kaijucraft.capabilities.DNCTPressedProcedure;
-import com.kingtyphon.kaijucraft.capabilities.DNCTReleasedProcedure;
+import com.kingtyphon.kaijucraft.capabilities.*;
+import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -43,10 +43,22 @@ public class DNCTPacket{
 
         if (!world.isClientSide()) { // Ensure it runs on the server
             if (type == 0) {
-                DNCTPressedProcedure.execute(entity);
+                boolean _setval = true;
+
+                // Accessing KaijuCapability for the entity
+                IKaijuCapability capability = entity.getCapability(KaijuProvider.KAIJU_CAPABILITY, Direction.NORTH).orElse(new KaijuCapability());
+
+                // Setting the runningwall state
+                capability.setRunningwall(_setval);
+                capability.syncWallrunVariables(entity);
             } else if (type == 1) {
-                DNCTReleasedProcedure.execute(entity);
-            }
+                if (entity != null) {
+                    boolean _setval = false;
+                    entity.getCapability(KaijuProvider.KAIJU_CAPABILITY, (Direction)null).ifPresent((capability) -> {
+                        capability.setRunningwall(_setval);
+                        capability.syncWallrunVariables(entity);
+                    });
+                }            }
         }
     }
 }

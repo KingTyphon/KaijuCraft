@@ -25,7 +25,7 @@ public class ModMessages {
                 .simpleChannel();
 
         INSTANCE = net;
-        net.messageBuilder(KaijuPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+        net.messageBuilder(KaijuPacket.class, id())
                 .decoder(KaijuPacket::new)
                 .encoder(KaijuPacket::toBytes)
                 .consumerMainThread(KaijuPacket::handle)
@@ -55,6 +55,33 @@ public class ModMessages {
                 .encoder(ParticleEffectPacket::toBytes)
                 .consumerMainThread(ParticleEffectPacket::handle)
                 .add();
+        net.messageBuilder(SyncPlayerAnimationPacket.class, id())
+                .decoder(SyncPlayerAnimationPacket::new)
+                .encoder(SyncPlayerAnimationPacket::toBytes)
+                .consumerMainThread(SyncPlayerAnimationPacket::handle)
+                .add();
+                net.messageBuilder(GasMaskTogglePacket.class, id())
+                        .decoder(GasMaskTogglePacket::new)
+                        .encoder(GasMaskTogglePacket::toBytes)
+                        .consumerMainThread(GasMaskTogglePacket::handle)
+                        .add();
+
+                net.messageBuilder(SyncGasMaskPacket.class, id())
+                        .decoder(SyncGasMaskPacket::new)
+                        .encoder(SyncGasMaskPacket::toBytes)
+                        .consumerMainThread(SyncGasMaskPacket::handle)
+                        .add();
+                net.messageBuilder(ReloadWeaponPacket.class, id())
+                        .decoder(ReloadWeaponPacket::new)
+                        .encoder(ReloadWeaponPacket::toBytes)
+                        .consumerMainThread(ReloadWeaponPacket::handle)
+                        .add();
+
+                net.messageBuilder(AmmoChangePacket.class, id())
+                        .decoder(AmmoChangePacket::new)
+                        .encoder(AmmoChangePacket::toBytes)
+                        .consumerMainThread(AmmoChangePacket::handle)
+                        .add();
         // You can continue registering other packets like this
 
 

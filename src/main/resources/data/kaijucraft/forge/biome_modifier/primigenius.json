@@ -1,0 +1,13 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": ["minecraft:plains","minecraft:bamboo_jungle"],
+
+  "spawners": [
+    {
+      "type": "kaijucraft:primigenius",
+      "weight": 70,
+      "minCount": 2,
+      "maxCount": 10
+    }
+  ]
+}

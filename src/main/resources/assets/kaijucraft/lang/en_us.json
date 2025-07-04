@@ -15,18 +15,24 @@
   "item.kaijucraft.nhcleaning_boots": "Cleaning Boots",
   "item.kaijucraft.nhcleaning_chestplate": "Cleaning Shirt",
   "item.kaijucraft.nhcleaning_leggings": "Cleaning Pants",
-  "item.kaijucraft.gas_mask": "Gas Mask",
+  "item.kaijucraft.respirator_mask": "Respirator Mask",
   "item.kaijucraft.entranceexamletter": "Exam Letter",
+  "item.kaijucraft.acceptanceletter": "Acceptance Letter",
 
-
+  "block.kaijucraft.kingtyphon_pop": "KingTyphon Pop Figure",
   "entity.kaijucraft.kaiju_no8": "Kaiju No.8",
   "entity.kaijucraft.primigenius": "Primigenius",
   "entity.kaijucraft.larva": "Larva",
+  "entity.kaijucraft.trichonephila": "Trichonephila",
 
-  "item.kaijucraft.glock17gen4" : "Glock 17 Gen 4",
+  "item.kaijucraft.glock17" : "Glock 17 Gen 4",
+  "item.kaijucraft.battleaxe": "Battle Axe",
+  "item.kaijucraft.cannon": "Cannon",
   "item.kaijucraft.twinsword" : "Twin Sword",
   "item.kaijucraft.kaiju_no8_spawn_egg": "Kaiju No.8 Spawn Egg",
   "item.kaijucraft.primigenius_spawn_egg": "Primigenius Spawn Egg",
+  "item.kaijucraft.trichonephila_spawn_egg": "Trichonephila Spawn Egg",
+
   "item.kaijucraft.larva_spawn_egg": "Larva Spawn Egg",
   "item.kaijucraft.sigsauershortrifle": "Sig Sauer Short Rifle",
   "item.kaijucraft.pneumatic_chainsaw": "Pneumatic Chainsaw",
@@ -37,8 +43,10 @@
   "key.kaijucraft.transform_key": "Transform",
   "key.kaijucraft.mobility_keybind": "Mobility",
   "key.kaijucraft.dash": "Dash",
+  "key.kaijucraft.gasmask_key": "Respirator Mask Equip",
   "key.kaijucraft.auto_sprint":  "Auto-Sprint",
   "key.kaijucraft.donotchangethis": "Don't Change This",
+  "key.kaijucraft.reload": "Reload",
 
   "key.categories.kaijucraft": "Kaiju Kraft",
 

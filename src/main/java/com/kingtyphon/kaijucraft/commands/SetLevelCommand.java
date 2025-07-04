@@ -19,7 +19,7 @@ public class SetLevelCommand {
     public SetLevelCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
     dispatcher.register(Commands.literal("setKaijuLevel")
             .requires(commandSource -> commandSource.hasPermission(2)) // Permission level 2: OPs
-            .then(Commands.argument("level", IntegerArgumentType.integer(1))
+            .then(Commands.argument("level", IntegerArgumentType.integer(1, 100))
                     .then(Commands.argument("player", EntityArgument.player()).executes(context -> {
                         int level = IntegerArgumentType.getInteger(context, "level");
                         ServerPlayer selectedPlayer = (ServerPlayer) EntityArgument.getEntity(context, "player");

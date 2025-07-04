@@ -23,7 +23,7 @@ public class KaijuCreativeModeTab {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(BlockInit.KAIJU_PARTS.get()))
                     .title(Component.translatable("creativetab.kaiju_tab"))
                     .displayItems((displayParameters, output) -> {
-                        // Armor - Formal Outfit
+                        //Armor - Formal Outfit
                         output.accept(ItemInit.MDEFENSEFORMAL_CHESTPLATE.get());
                         output.accept(ItemInit.MDEFENSEFORMAL_LEGGINGS.get());
                         output.accept(ItemInit.MDEFENSEFORMAL_BOOTS.get());
@@ -36,6 +36,10 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.NHCLEANING_LEGGINGS.get());
                         output.accept(ItemInit.NHCLEANING_BOOTS.get());
                         output.accept(ItemInit.GAS_MASK.get());
+//                        output.accept(ItemInit.SKELLYKAIJU_HELMET.get());
+//                        output.accept(ItemInit.SKELLYKAIJU_CHESTPLATE.get());
+//                        output.accept(ItemInit.SKELLYKAIJU_LEGGINGS.get());
+//                        output.accept(ItemInit.SKELLYKAIJU_BOOTS.get());
 
                         // Armor - Combat Outfit
                         output.accept(ItemInit.MCOMBAT_HELMET.get());
@@ -44,7 +48,9 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.MCOMBAT_BOOTS.get());
 
                         output.accept(ItemInit.ENTRANCEEXAMLETTER.get());
+                        output.accept(ItemInit.ACCEPTANCELETTER.get());
                         output.accept(ItemInit.KAIJU_NO8_SPAWN_EGG.get());
+                        output.accept(ItemInit.TRICHONEPHILA_SPAWN_EGG.get());
                         output.accept(ItemInit.PRIMIGENIUS_SPAWN_EGG.get());
                         output.accept(ItemInit.LARVA_SPAWN_EGG.get());
                         output.accept(ItemInit.KAIJU_MUSCLE.get());
@@ -53,7 +59,11 @@ public class KaijuCreativeModeTab {
                         output.accept(ItemInit.GLOCK17GEN4.get());
                         output.accept(ItemInit.SIGSAUERSHORTRIFLE.get());
                         output.accept(ItemInit.PNEUMATICCHAINSAW.get());
+                        output.accept(ItemInit.CANNON.get());
                         output.accept(ItemInit.TWINSWORD.get());
+                        output.accept(ItemInit.BATTLEAXE.get());
+                        output.accept(BlockInit.KINGTYPHON_POP.get());
+
                     }).build());
 
     public static void register(IEventBus eventBus) {

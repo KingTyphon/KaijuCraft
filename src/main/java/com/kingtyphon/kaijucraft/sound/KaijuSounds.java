@@ -23,7 +23,8 @@ public class KaijuSounds {
     public static final RegistryObject<SoundEvent> KAIJU_NO8_ROAR2 = registerSoundEvents("kaiju_no8_roar2");
     public static final RegistryObject<SoundEvent> CHAINSAW_ON = registerSoundEvents("chainsaw_sound");
     public static final RegistryObject<SoundEvent> GUNSHOTG17 = registerSoundEvents("gunshot");
-
+    public static final RegistryObject<SoundEvent> AXESWOOSH = registerSoundEvents("axeswoosh");
+    public static final RegistryObject<SoundEvent> SWORD = registerSoundEvents("sword");
 
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name){

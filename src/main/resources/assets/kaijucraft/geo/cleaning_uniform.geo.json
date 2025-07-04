@@ -39,7 +39,7 @@
 					"parent": "bipedRightArm",
 					"pivot": [-5, 22, 0],
 					"cubes": [
-						{"origin": [-9.4, 11.4, -2.5], "size": [5, 13, 5], "uv": [1, 19]}
+						{"origin": [-9, 11.4, -2.5], "size": [5, 13, 5], "uv": [1, 19]}
 					]
 				},
 				{
@@ -51,7 +51,7 @@
 					"parent": "bipedLeftArm",
 					"pivot": [5, 22, 0],
 					"cubes": [
-						{"origin": [4.4, 11.4, -2.5], "size": [5, 13, 5], "uv": [21, 19], "mirror": true}
+						{"origin": [4, 11.4, -2.5], "size": [5, 13, 5], "uv": [21, 19], "mirror": true}
 					]
 				},
 				{
