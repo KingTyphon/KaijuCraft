@@ -1,9 +1,9 @@
 package com.kingtyphon.kaijucraft.item.guns;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.capabilities.IKaijuCapability;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.entity.kaiju.OrganWeakSpotEntity;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.kingtyphon.kaijucraft.networking.packets.ParticleEffectPacket;
 import com.kingtyphon.kaijucraft.networking.packets.SyncPlayerAnimationPacket;
@@ -17,14 +17,12 @@ import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -356,20 +354,40 @@ public class Glock17Gen4 extends Item  implements GeoItem {
         EntityHitResult closestHit = null;
         double closestDistance = RANGE;
 
+        // Step 1: find the nearest entity along the ray
         for (Entity entity : level.getEntities(player, new AABB(start, end).inflate(1.0))) {
-            if (entity.isPickable() && entity != player) {
-                AABB aabb = entity.getBoundingBox();
-                Optional<Vec3> hitVec = aabb.clip(start, end);
+            if (!entity.isPickable() || entity == player) continue;
 
-                if (hitVec.isPresent()) {
-                    double distance = start.distanceTo(hitVec.get());
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestHit = new EntityHitResult(entity, hitVec.get());
+            AABB aabb = entity.getBoundingBox();
+            Optional<Vec3> hitVec = aabb.clip(start, end);
+
+            if (hitVec.isPresent()) {
+                double distance = start.distanceTo(hitVec.get());
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestHit = new EntityHitResult(entity, hitVec.get());
+                }
+            }
+        }
+
+        // Step 2: if we hit something, check if it overlaps a weakspot
+        if (closestHit != null && !(closestHit.getEntity() instanceof OrganWeakSpotEntity)) {
+            for (OrganWeakSpotEntity weakSpot : level.getEntitiesOfClass(
+                    OrganWeakSpotEntity.class, new AABB(start, end).inflate(0.5))) {
+
+                if (!weakSpot.isAlive()) continue;
+
+                Optional<Vec3> weakHit = weakSpot.getBoundingBox().clip(start, end);
+                if (weakHit.isPresent()) {
+                    double weakDist = start.distanceTo(weakHit.get());
+                    if (weakDist <= closestDistance + 0.05) { // small tolerance
+                        // 👇 flag this somehow (e.g., set metadata or return a special hit)
+                        return new EntityHitResult(weakSpot, weakHit.get());
                     }
                 }
             }
         }
+
         return closestHit;
     }
 
@@ -449,17 +467,20 @@ public class Glock17Gen4 extends Item  implements GeoItem {
     }
     private static void playAnimation(Player player, String animationName ){
         if(player.level().isClientSide){
-                if (player instanceof AbstractClientPlayer clientPlayer) {
-                    var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess
-                            .getPlayerAssociatedData(clientPlayer)
-                            .get(new ResourceLocation(MODID, "animationglock"));
+            if (player instanceof AbstractClientPlayer clientPlayer) {
+                var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess
+                        .getPlayerAssociatedData(clientPlayer)
+                        .get(new ResourceLocation(MODID, "animationsigsauer"));
 
-                    if (animation != null) {
-                        animation.setAnimation(new KeyframeAnimationPlayer(
-                                PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))).setFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL).setFirstPersonConfiguration(new FirstPersonConfiguration().setShowRightArm(true).setShowLeftArm(true)));
-                    }
-
+                if (animation != null) {
+                    if(!animationName.equals("aim_glock")&& !animationName.equals("aim_sigsauer") && !animationName.equals("recoil_glock")&& !animationName.equals("recoil_sigsauer")) {
+                    animation.setAnimation(new KeyframeAnimationPlayer(
+                            PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))).setFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL).setFirstPersonConfiguration(new FirstPersonConfiguration().setShowRightArm(true).setShowLeftArm(true)));
+                } else if ( animationName.equals("aim_glock")|| animationName.equals("aim_sigsauer")|| animationName.equals("recoil_glock")|| animationName.equals("recoil_sigsauer")) {
+                    animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))));
                 }
+                }
+            }
             sendAnimationToServer(player, animationName, "animationglock" );
         }
     }

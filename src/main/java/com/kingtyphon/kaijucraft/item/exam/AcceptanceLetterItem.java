@@ -1,17 +1,13 @@
 package com.kingtyphon.kaijucraft.item.exam;
 
-import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 import java.util.Random;

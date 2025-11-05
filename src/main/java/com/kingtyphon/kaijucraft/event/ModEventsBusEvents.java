@@ -1,11 +1,7 @@
 package com.kingtyphon.kaijucraft.event;
 
-import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.entity.client.Kaiju_no8Model;
-import com.kingtyphon.kaijucraft.entity.client.ModelLayers;
-import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
-import com.kingtyphon.kaijucraft.entity.kaiju.LarvaEntity;
-import com.kingtyphon.kaijucraft.entity.kaiju.PrimigeniusEntity;
+import com.kingtyphon.kaijucraft.entity.kaiju.*;
+import com.kingtyphon.kaijucraft.entity.npc.Kikoru;
 import com.kingtyphon.kaijucraft.init.EntityInit;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
@@ -14,8 +10,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,8 +25,9 @@ public class ModEventsBusEvents {
         event.put(EntityInit.KAIJU_NO8.get(), Kaiju_no8Entity.createAttributes().build());
         event.put(EntityInit.LARVA.get(), LarvaEntity.createAttributes().build());
         event.put(EntityInit.PRIMIGENIUS.get(), PrimigeniusEntity.createAttributes().build());
-        event.put(EntityInit.TRICHONEPHILA.get(), PrimigeniusEntity.createAttributes().build());
-
+        event.put(EntityInit.TRICHONEPHILA.get(), TrichonephilaEntity.createAttributes().build());
+        event.put(EntityInit.KIKORU.get(), Kikoru.createAttributes().build());
+        event.put(EntityInit.PHANEROPLUS.get(), PhaneroplusEntity.createAttributes().build());
     }
     @SubscribeEvent
     public static void commonSetup(FMLCommonSetupEvent event){

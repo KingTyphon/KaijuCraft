@@ -1,7 +1,7 @@
 package com.kingtyphon.kaijucraft.event;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
 import com.kingtyphon.kaijucraft.init.ItemInit;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;

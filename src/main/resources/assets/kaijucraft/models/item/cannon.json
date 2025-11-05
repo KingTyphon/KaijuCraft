@@ -1,0 +1,111 @@
+{
+  "parent": "builtin/entity",
+  "texture_size": [
+    128,
+    128
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        91.5,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        16.25,
+        -20.25
+      ],
+      "scale": [
+        1.63,
+        1.63,
+        1.63
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        91.5,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        16.25,
+        -20.25
+      ],
+      "scale": [
+        1.63,
+        1.63,
+        1.63
+      ]
+    },
+    "firstperson_righthand": {
+      "translation": [
+        0,
+        -8.75,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        0,
+        -8.75,
+        0
+      ]
+    },
+    "ground": {
+      "rotation": [
+        1,
+        0,
+        -98
+      ],
+      "translation": [
+        -13.25,
+        1.75,
+        0
+      ],
+      "scale": [
+        1.63,
+        1.63,
+        1.63
+      ]
+    },
+    "gui": {
+      "rotation": [
+        90,
+        43.75,
+        -90
+      ],
+      "translation": [
+        -3.25,
+        -5,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        43.75,
+        -90
+      ],
+      "translation": [
+        -4,
+        -6.75,
+        0
+      ],
+      "scale": [
+        0.71,
+        0.71,
+        0.71
+      ]
+    }
+  },
+  "textures": {
+    "particle": "item/cannon"
+  }
+}

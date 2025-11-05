@@ -192,7 +192,7 @@ public class TrichonephilaEntity extends Animal implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 200D)
                 .add(Attributes.ATTACK_DAMAGE, 20.0f)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
-                .add(Attributes.MOVEMENT_SPEED, 0.5f)
+                .add(Attributes.MOVEMENT_SPEED, 0.6f)
                 .add(Attributes.FOLLOW_RANGE, 100.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 3.0f);
     }

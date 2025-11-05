@@ -1,6 +1,8 @@
 package com.kingtyphon.kaijucraft.networking.packets;
 
-import com.kingtyphon.kaijucraft.capabilities.*;
+import com.kingtyphon.kaijucraft.common.capabilities.IKaijuCapability;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuCapability;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;

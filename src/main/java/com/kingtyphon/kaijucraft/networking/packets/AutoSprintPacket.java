@@ -1,6 +1,6 @@
 package com.kingtyphon.kaijucraft.networking.packets;
 
-import com.kingtyphon.kaijucraft.capabilities.AutoSprintOnKeyPressedProcedure;
+import com.kingtyphon.kaijucraft.common.capabilities.AutoSprintOnKeyPressedProcedure;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;

@@ -4,6 +4,7 @@ import com.kingtyphon.kaijucraft.init.EntityInit;
 import com.kingtyphon.kaijucraft.sound.KaijuSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -23,10 +25,10 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -38,7 +40,6 @@ public class PrimigeniusEntity extends Animal {
         super(pEntityType, pLevel);
     }
 
-    public static Boolean isShiny = false;
     public final AnimationState idleAnimationState = new AnimationState();
     private int roarAnimationTimeout = 0;
     private int attackAnimationTimeout = 0;
@@ -47,11 +48,25 @@ public class PrimigeniusEntity extends Animal {
     public final AnimationState roarAnimationState = new AnimationState();
     private static final EntityDataAccessor<Boolean> IS_ROARING = SynchedEntityData.defineId(PrimigeniusEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(PrimigeniusEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_SHINY = SynchedEntityData.defineId(PrimigeniusEntity.class, EntityDataSerializers.BOOLEAN);
+    @Override
+    @Nullable
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason,
+                                        @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        SpawnGroupData groupData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
 
+        // 5% chance to spawn as shiny (adjust as needed)
+        if (this.random.nextFloat() < 0.05f) {
+            this.setShiny(true);
+        }
+
+        return groupData;
+    }
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(IS_ROARING, false);
+        this.entityData.define(IS_SHINY, false);
         this.entityData.define(ATTACKING, false);
     }
     public void setAttacking(boolean attacking){
@@ -71,7 +86,13 @@ public class PrimigeniusEntity extends Animal {
     public void setRoaring(boolean roaring) {
         this.entityData.set(IS_ROARING, roaring);
     }
+    public boolean isShiny() {
+        return this.entityData.get(IS_SHINY);
+    }
 
+    public void setShiny(boolean shiny) {
+        this.entityData.set(IS_SHINY, shiny);
+    }
     public static boolean canSpawn(EntityType<PrimigeniusEntity> entityType, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         return checkAnimalSpawnRules(entityType, level, spawnType, pos, random) && pos.getY() > 100;
     }
@@ -147,13 +168,23 @@ public class PrimigeniusEntity extends Animal {
     public static AttributeSupplier.Builder createAttributes() {
         return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 200D)
-                .add(Attributes.ATTACK_DAMAGE, 20.0f)
+                .add(Attributes.ATTACK_DAMAGE, 40.0f)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.MOVEMENT_SPEED, 0.5f)
                 .add(Attributes.FOLLOW_RANGE, 100.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 3.0f);
     }
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Shiny", this.isShiny());
+    }
 
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setShiny(tag.getBoolean("Shiny"));
+    }
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {

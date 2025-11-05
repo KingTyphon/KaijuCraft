@@ -1,15 +1,11 @@
 package com.kingtyphon.kaijucraft.item.guns;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.capabilities.IKaijuCapability;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.entity.kaiju.OrganWeakSpotEntity;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
-import com.kingtyphon.kaijucraft.networking.packets.ParticleEffectPacket;
 import com.kingtyphon.kaijucraft.networking.packets.SyncPlayerAnimationPacket;
-import com.lowdragmc.photon.client.fx.BlockEffect;
-import com.lowdragmc.photon.client.fx.EntityEffect;
-import com.lowdragmc.photon.client.fx.FX;
-import com.lowdragmc.photon.client.fx.FXHelper;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonConfiguration;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
@@ -21,13 +17,11 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -37,8 +31,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.network.PacketDistributor;
-import org.checkerframework.checker.signature.qual.Identifier;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.constant.DefaultAnimations;
@@ -106,14 +98,14 @@ public class SigSauerShortRifleItem extends Item implements GeoItem {
                 var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess
                         .getPlayerAssociatedData(clientPlayer)
                         .get(new ResourceLocation(MODID, "animationsigsauer"));
-
-                if (animation != null || animationName.equals("aim_glock")|| animationName.equals("aim_sigsauer")) {
-                    animation.setAnimation(new KeyframeAnimationPlayer(
-                            PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))).setFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL).setFirstPersonConfiguration(new FirstPersonConfiguration().setShowRightArm(true).setShowLeftArm(true)));
-                } else if ( animationName.equals("aim_glock")|| animationName.equals("aim_sigsauer")) {
-                    animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))));
+                if(animation != null) {
+                    if (!animationName.equals("aim_glock") && !animationName.equals("aim_sigsauer") && !animationName.equals("recoil_glock") && !animationName.equals("recoil_sigsauer")) {
+                        animation.setAnimation(new KeyframeAnimationPlayer(
+                                PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))).setFirstPersonMode(FirstPersonMode.VANILLA).setFirstPersonConfiguration(new FirstPersonConfiguration().setShowRightArm(true).setShowLeftArm(true)));
+                    } else if (animationName.equals("aim_glock") || animationName.equals("aim_sigsauer") || animationName.equals("recoil_glock") || animationName.equals("recoil_sigsauer")) {
+                        animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(new ResourceLocation(MODID, animationName))));
+                    }
                 }
-
 
             }
             sendAnimationToServer(player, animationName, "animationsigsauer" );
@@ -255,33 +247,64 @@ public class SigSauerShortRifleItem extends Item implements GeoItem {
             syncGunFlagsToCapability(player);
         }
     }
+    private EntityHitResult getWeakSpotHit(Level level, Player shooter, Vec3 start, Vec3 end) {
+        EntityHitResult closest = null;
+        double closestDist = RANGE;
+
+        // Look for ONLY OrganWeakSpotEntity
+        for (OrganWeakSpotEntity weakSpot : level.getEntitiesOfClass(OrganWeakSpotEntity.class,
+                new AABB(start, end).inflate(0.2))) {
+
+            // skip if not alive
+            if (!weakSpot.isAlive()) continue;
+
+            // does the ray intersect the weak spot’s bounding box?
+            Optional<Vec3> hit = weakSpot.getBoundingBox().clip(start, end);
+            if (hit.isPresent()) {
+                double dist = start.distanceTo(hit.get());
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = new EntityHitResult(weakSpot, hit.get());
+                }
+            }
+        }
+
+        return closest;
+    }
     private void shoot(Level level, Player player) {
         Vec3 start = player.getEyePosition();
         Vec3 look = player.getViewVector(1.0F);
         Vec3 end = start.add(look.scale(RANGE));
+
         IKaijuCapability capability = player.getCapability(KaijuProvider.KAIJU_CAPABILITY)
                 .orElseThrow(() -> new IllegalArgumentException("No capability found"));
 
-        // Scale damage based on power level
         int powerLevel = capability.getLevel();
-        // Block collision check
-        BlockHitResult blockHit = level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
 
-        // Entity hit check
-        EntityHitResult entityHit = getEntityHit(level, player, start, end);
-
-        if (entityHit != null) { // If an entity is hit before a block
-            LivingEntity target = (LivingEntity) entityHit.getEntity();
-            if(capability.getRange()>=7 ){
-            target.hurt(player.damageSources().playerAttack(player), (DAMAGE + (powerLevel * .15f)));
-            }else{
-                target.hurt(player.damageSources().playerAttack(player), DAMAGE);
-            }
-        } else if (blockHit.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockPos = blockHit.getBlockPos();
-// Bullet stops at the block
+        // First: check weak spot explicitly
+        EntityHitResult weakspotHit = getWeakSpotHit(level, player, start, end);
+        if (weakspotHit != null && weakspotHit.getEntity() instanceof OrganWeakSpotEntity weakSpot) {
+            weakSpot.hurt(player.damageSources().playerAttack(player), (DAMAGE * 2.0F)); // gun does crit on weak spot
+            return; // Stop here, don't double-hit other entities
         }
 
+        // Otherwise: check for normal entities
+        EntityHitResult entityHit = getEntityHit(level, player, start, end);
+
+        if (entityHit != null && entityHit.getEntity() instanceof LivingEntity target) {
+            if (capability.getRange() >= 7) {
+                target.hurt(player.damageSources().playerAttack(player), (DAMAGE + (powerLevel * 0.15f)));
+            } else {
+                target.hurt(player.damageSources().playerAttack(player), DAMAGE);
+            }
+        } else {
+            // Block collision check
+            BlockHitResult blockHit = level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+            if (blockHit.getType() == HitResult.Type.BLOCK) {
+                BlockPos blockPos = blockHit.getBlockPos();
+                // TODO: bullet impact effects here
+            }
+        }
     }
 
     private EntityHitResult getEntityHit(Level level, Player shooter, Vec3 start, Vec3 end) {

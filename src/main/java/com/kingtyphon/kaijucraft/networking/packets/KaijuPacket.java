@@ -1,8 +1,7 @@
 package com.kingtyphon.kaijucraft.networking.packets;
 
-import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
-import com.kingtyphon.kaijucraft.networking.KaijuHelper;
+import com.kingtyphon.kaijucraft.common.capabilities.IKaijuCapability;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

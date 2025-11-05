@@ -1,8 +1,9 @@
 package com.kingtyphon.kaijucraft;
 
 
-import com.kingtyphon.kaijucraft.capabilities.IKaijuCapability;
-import com.kingtyphon.kaijucraft.entity.client.*;
+import com.kingtyphon.kaijucraft.client.entity.client.EmptyRenderer;
+import com.kingtyphon.kaijucraft.client.entity.client.*;
+import com.kingtyphon.kaijucraft.common.capabilities.IKaijuCapability;
 import com.kingtyphon.kaijucraft.event.CustomRenderRegistry;
 import com.kingtyphon.kaijucraft.handlers.KeyInputHandler;
 import com.kingtyphon.kaijucraft.init.BlockInit;
@@ -15,20 +16,12 @@ import com.mojang.logging.LogUtils;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -126,6 +119,10 @@ public class KaijuCraft
             EntityRenderers.register(EntityInit.KAIJU_PART.get(), KaijuPartRender::new);
             EntityRenderers.register(EntityInit.PRIMIGENIUS.get(), PrimigeniusRenderer::new);
             EntityRenderers.register(EntityInit.TRICHONEPHILA.get(), TrichonephilaRenderer::new);
+            EntityRenderers.register(EntityInit.KIKORU.get(), KikoruRenderer::new);
+            EntityRenderers.register(EntityInit.PHANEROPLUS.get(), PhaneroplusRenderer::new);
+            EntityRenderers.register(EntityInit.ORGAN_WEAK_SPOT.get(), EmptyRenderer::new);
+
             CustomRenderRegistry.init();
         }
         @SubscribeEvent

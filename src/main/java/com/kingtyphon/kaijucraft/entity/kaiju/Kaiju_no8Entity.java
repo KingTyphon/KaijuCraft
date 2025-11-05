@@ -43,6 +43,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Kaiju_no8Entity extends Animal implements GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+    private RawAnimation currentAnimation = null;
+
     public Kaiju_no8Entity(EntityType<? extends Animal> pEntityType, Level plevel){
         super(pEntityType,plevel);
     }
@@ -50,36 +52,50 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar){
         controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
+    private Player animationDriver;
+
+    public void setAnimationDriver(Player player) {
+        this.animationDriver = player;
+    }
+
+    public Player getAnimationDriver() {
+        return this.animationDriver;
+    }
     private <T extends GeoAnimatable> PlayState predicate(software.bernie.geckolib.core.animation.AnimationState<T> tAnimationState) {
         AnimationController<T> controller = tAnimationState.getController();
-        if (this.getVehicle() instanceof Player player) {
-            double speed = player.getDeltaMovement().horizontalDistance();
+        RawAnimation nextAnim;
 
-            if (speed > 0.1) {
-                controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
-            } else {
-                controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
+        if (animationDriver != null) {
+            double speed = animationDriver.getDeltaMovement().horizontalDistance();
+            if(animationDriver.swinging){
+                nextAnim = RawAnimation.begin().then("animation.kaijuno8.attack", Animation.LoopType.PLAY_ONCE);
             }
-        }
-
-        if (this.isRoaring()) {
-            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.roar", Animation.LoopType.PLAY_ONCE));
-            return PlayState.CONTINUE;
+            else if (speed > 0.1) {
+                nextAnim = RawAnimation.begin().then("animation.kaijuno8.run", Animation.LoopType.LOOP);
+            } else {
+                nextAnim = RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP);
+            }
+        } else if (this.isRoaring()) {
+            nextAnim = RawAnimation.begin().then("animation.kaijuno8.roar", Animation.LoopType.PLAY_ONCE);
         } else if (this.isAttacking()) {
-            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.attack", Animation.LoopType.PLAY_ONCE));
-            return PlayState.CONTINUE;
-        }else if (this.isSprinting()) {
-            controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.run", Animation.LoopType.LOOP));
-            return PlayState.CONTINUE;
+            nextAnim = RawAnimation.begin().then("animation.kaijuno8.attack", Animation.LoopType.PLAY_ONCE);
+        } else if (this.isSprinting()) {
+            nextAnim = RawAnimation.begin().then("animation.kaijuno8.run", Animation.LoopType.LOOP);
         }else if (tAnimationState.isMoving()) {
             controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.walk", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
+        } else {
+            nextAnim = RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP);
         }
 
-        controller.setAnimation(RawAnimation.begin().then("animation.kaijuno8.idle", Animation.LoopType.LOOP));
+        // Only change the animation if it’s different
+        if (currentAnimation != nextAnim) {
+            controller.setAnimation(nextAnim);
+            currentAnimation = nextAnim;
+        }
+
         return PlayState.CONTINUE;
     }
-
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache(){
         return cache;
@@ -93,6 +109,7 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
     public final AnimationState roarAnimationState = new AnimationState();
     private static final EntityDataAccessor<Boolean> IS_ROARING = SynchedEntityData.defineId(Kaiju_no8Entity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(Kaiju_no8Entity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CHARGING_PUNCH = SynchedEntityData.defineId(Kaiju_no8Entity.class, EntityDataSerializers.BOOLEAN);
 
     @Override
     protected void defineSynchedData() {
@@ -100,6 +117,15 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
         this.entityData.define(IS_ROARING, false);
         this.entityData.define(ATTACKING, false);
         this.entityData.define(OWNER, ""); // Default to empty string
+        this.entityData.define(CHARGING_PUNCH, false);
+
+    }
+    public boolean isChargingPunch() {
+        return this.entityData.get(CHARGING_PUNCH);
+    }
+
+    public void setChargingPunch(boolean charging) {
+        this.entityData.set(CHARGING_PUNCH, charging);
     }
     public void setAttacking(boolean attacking){
         this.entityData.set(ATTACKING, attacking);
@@ -143,7 +169,7 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
         }
 
         // Reset attack animation after some time
-        if (this.isAttacking() && this.tickCount % 20 == 0) {
+        if (this.isAttacking() && this.tickCount % 26 == 0) {
             this.setAttacking(false);
         }
     }
@@ -154,21 +180,24 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class,5f));
-        this.goalSelector.addGoal(3, new RoarGoal(this));
-        this.goalSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.goalSelector.addGoal(2, new ChargedPunchGoal(this)); // <-- Added here
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class,5f));
+        this.goalSelector.addGoal(5, new HurtByTargetGoal(this));
+        this.goalSelector.addGoal(6, new RoarGoal(this));
 
 
     }
 
     public static AttributeSupplier.Builder createAttributes() {
             return Animal.createLivingAttributes()
-                    .add(Attributes.MAX_HEALTH, 300D)
-                    .add(Attributes.ATTACK_DAMAGE, 20.0f)
+                    .add(Attributes.MAX_HEALTH, 1000D)
+                    .add(Attributes.ATTACK_DAMAGE, 60.0f)
                     .add(Attributes.ATTACK_SPEED, 1.0f)
-                    .add(Attributes.MOVEMENT_SPEED, 0.6f)
+                    .add(Attributes.MOVEMENT_SPEED, 0.7f)
                     .add(Attributes.FOLLOW_RANGE, 40.0D)
-                .add(Attributes.ATTACK_KNOCKBACK, 3.0f);
+                    .add(Attributes.ARMOR,  30.0D)
+                    .add(Attributes.ARMOR_TOUGHNESS,  20.0D)
+                    .add(Attributes.ATTACK_KNOCKBACK, 5.0f);
     }
     @Nullable
     @Override
@@ -290,5 +319,67 @@ public class Kaiju_no8Entity extends Animal implements GeoEntity {
             super.stop();
         }
     }
+    private static class ChargedPunchGoal extends Goal {
+        private final Kaiju_no8Entity entity;
+        private int chargeTime;
+
+        public ChargedPunchGoal(Kaiju_no8Entity entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public boolean canUse() {
+            // Small chance to use if near a target
+            LivingEntity target = this.entity.getTarget();
+            return target != null && this.entity.distanceToSqr(target) < 16 && this.entity.getRandom().nextInt(500) == 0;
+        }
+
+        @Override
+        public void start() {
+            chargeTime = 40; // 2 seconds charge
+            entity.setChargingPunch(true);
+            entity.getNavigation().stop(); // stop moving while charging
+        }
+
+        @Override
+        public void tick() {
+            if (chargeTime > 0) {
+                chargeTime--;
+
+                // Play charge sound midway
+                if (chargeTime == 20) {
+                    entity.playSound(KaijuSounds.KAIJU_NO8_ROAR1.get(), 2.0f, 0.8f);
+                }
+
+                // After charging -> punch
+                if (chargeTime == 0) {
+                    unleashPunch();
+                }
+            }
+        }
+
+        private void unleashPunch() {
+            entity.setChargingPunch(false);
+            LivingEntity target = entity.getTarget();
+            if (target != null && entity.distanceToSqr(target) < 25) {
+                // Massive damage
+                target.hurt(entity.damageSources().mobAttack(entity), 150.0f);
+
+                // Knockback effect
+                double dx = target.getX() - entity.getX();
+                double dz = target.getZ() - entity.getZ();
+                target.knockback(5.0D, dx, dz);
+
+                // Punch sound
+                entity.playSound(KaijuSounds.KAIJU_NO8_GRUNT1.get(), 2.0f, 0.6f);
+            }
+        }
+
+        @Override
+        public void stop() {
+            entity.setChargingPunch(false);
+        }
+    }
+
 
 }

@@ -1,8 +1,8 @@
 package com.kingtyphon.kaijucraft.init;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.block.KaijuPartsBlock;
-import com.kingtyphon.kaijucraft.block.KingTyphonPopBlock;
+import com.kingtyphon.kaijucraft.common.block.KaijuPartsBlock;
+import com.kingtyphon.kaijucraft.common.block.KingTyphonPopBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

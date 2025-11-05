@@ -1,6 +1,6 @@
 package com.kingtyphon.kaijucraft.networking;
 
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
 import com.kingtyphon.kaijucraft.init.ItemInit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;

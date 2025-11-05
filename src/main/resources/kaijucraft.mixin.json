@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.kingtyphon.kaijucraft.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "kaijucraft.mixin-refmap.json",
+  "mixins": [
+    "ArmorFeatureRendererMixin"
+  ],
+  "client": [
+    "ArmorFeatureRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

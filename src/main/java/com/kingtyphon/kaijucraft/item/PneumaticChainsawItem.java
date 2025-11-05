@@ -8,9 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -61,54 +64,93 @@ public class PneumaticChainsawItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         boolean isOn = stack.getOrCreateTag().getBoolean("on");
 
-        if (!isOn) { // Prevents sound spam
-            stack.getOrCreateTag().putBoolean("on", true); // Activate chainsaw
+        if (!isOn) { // first time activating
+            stack.getOrCreateTag().putBoolean("on", true);
 
             if (world.isClientSide) {
-                // Play looping sound on the client side
                 RandomSource random = world.getRandom();
                 SimpleSoundInstance soundInstance = new SimpleSoundInstance(
-                        KaijuSounds.CHAINSAW_ON.get().getLocation(),       // Sound event
-                        SoundSource.PLAYERS,                  // Sound source
-                        10.0F,                                 // Volume
-                        1.0F,                                 // Pitch
-                        random,true, 0, SoundInstance.Attenuation.LINEAR,// Random source
-                        player.getX(), player.getY(), player.getZ(), false  // Position
+                        KaijuSounds.CHAINSAW_ON.get().getLocation(),
+                        SoundSource.PLAYERS,
+                        10.0F,
+                        1.0F,
+                        random, true, 0, SoundInstance.Attenuation.LINEAR,
+                        player.getX(), player.getY(), player.getZ(), false
                 );
-
                 Minecraft.getInstance().getSoundManager().play(soundInstance);
             }
         }
 
-        // **Get the direction the player is facing**
-        Vec3 direction = player.getViewVector(1.0F); // Gets the forward direction
-        BlockPos playerPos = player.blockPosition();
-        // **Calculate the search range in front of the player**
-        double range = 1.0; // Set the range to 1 block ahead of the player
-        AABB searchBox = new AABB(playerPos.offset((int) (direction.x * range), (int) (direction.y * range), (int) (direction.z * range)))
-                .inflate(1.0); // Inflates slightly in all directions
-
-        // **Detect KaijuPartEntities within the search box**
-        List<Entity> entities = world.getEntities(player, searchBox, entity -> entity instanceof KaijuPartEntity);
-
-        if (!entities.isEmpty()) {
-            if (!world.isClientSide) {
-                // For each KaijuPartEntity detected
-                for (Entity entity : entities) {
-                    if (entity instanceof KaijuPartEntity kaijuPart) {
-                        // Kill the KaijuPartEntity
-                        kaijuPart.kill();
-                        // Give Kaiju Muscle item to the player
-                        player.addItem(new ItemStack(ItemInit.KAIJU_MUSCLE.get()));
-                    }
-                }
-            }
-        }
-
-        player.startUsingItem(hand); // Keeps item active while holding
-        return InteractionResultHolder.fail(stack);
+        // tells MC we’re holding right click, so onUseTick will start being called
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(stack);
     }
 
+    @Override
+    public void onUseTick(Level world, LivingEntity user, ItemStack stack, int count) {
+        if (!(user instanceof Player player)) return;
+        if (world.isClientSide) return;
+
+        // Look direction
+        Vec3 direction = player.getViewVector(1.0F);
+        BlockPos playerPos = player.blockPosition();
+        double range = 1.0;
+
+        AABB searchBox = new AABB(
+                playerPos.offset((int)(direction.x * range),
+                        (int)(direction.y * range),
+                        (int)(direction.z * range))
+        ).inflate(1.0);
+
+        List<Entity> entities = world.getEntities(player, searchBox, e -> e instanceof KaijuPartEntity);
+
+        for (Entity entity : entities) {
+            if (entity instanceof KaijuPartEntity kaijuPart) {
+                int grindProgress = kaijuPart.getPersistentData().getInt("GrindProgress");
+                grindProgress++;
+
+                if (grindProgress >= 20) { // 1 second at 20tps
+                    kaijuPart.reduceHitPoints(player);
+                    grindProgress = 0;
+                }
+
+                kaijuPart.getPersistentData().putInt("GrindProgress", grindProgress);
+            }
+        }
+    }
+
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean isSelected) {
+        if (!(entity instanceof Player player)) return;
+        if (world.isClientSide) return;
+
+        CompoundTag tag = stack.getOrCreateTag();
+        boolean isOn = tag.getBoolean("on");
+
+        if (!isOn || !isSelected) return; // Only attack if item is held and turned on
+
+        if (player.tickCount % 10 == 0) { // Every 10 ticks = 0.5s
+
+            Vec3 direction = player.getViewVector(1.0F);
+            BlockPos playerPos = player.blockPosition();
+            double range = 2.0;
+
+            AABB searchBox = new AABB(playerPos.offset(
+                    (int)(direction.x * range),
+                    (int)(direction.y * range),
+                    (int)(direction.z * range)))
+                    .inflate(1.0);
+
+            List<Entity> targets = world.getEntitiesOfClass(Entity.class, searchBox, e ->
+                    !(e instanceof KaijuPartEntity) &&
+                            e != player &&
+                            e.isAlive());
+            for (Entity target : targets) {
+                target.hurt(player.damageSources().genericKill(), 4.0F); // Example damage
+            }
+        }
+    }
     @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft) {
         if (!(entity instanceof Player)) return;

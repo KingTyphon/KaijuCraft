@@ -1,6 +1,5 @@
 package com.kingtyphon.kaijucraft.item.exam;
 
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;

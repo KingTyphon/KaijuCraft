@@ -76,7 +76,11 @@ public class ModMessages {
                         .encoder(ReloadWeaponPacket::toBytes)
                         .consumerMainThread(ReloadWeaponPacket::handle)
                         .add();
-
+                net.messageBuilder(TransformationPacket.class, id())
+                        .decoder(TransformationPacket::new)
+                        .encoder(TransformationPacket::toBytes)
+                        .consumerMainThread(TransformationPacket::handle)
+                        .add();
                 net.messageBuilder(AmmoChangePacket.class, id())
                         .decoder(AmmoChangePacket::new)
                         .encoder(AmmoChangePacket::toBytes)

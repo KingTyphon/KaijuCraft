@@ -1,6 +1,5 @@
 package com.kingtyphon.kaijucraft.datagen;
 
-import com.kingtyphon.kaijucraft.block.KingTyphonPopBlock;
 import com.kingtyphon.kaijucraft.init.BlockInit;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;

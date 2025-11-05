@@ -1,8 +1,8 @@
 package com.kingtyphon.kaijucraft.item.melee;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
-import com.kingtyphon.kaijucraft.item.guns.Glock17Gen4Renderer;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.entity.kaiju.OrganWeakSpotEntity;
 import com.kingtyphon.kaijucraft.sound.KaijuSounds;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonConfiguration;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
@@ -29,10 +29,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
@@ -42,6 +42,7 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static com.kingtyphon.kaijucraft.KaijuCraft.MODID;
@@ -86,63 +87,87 @@ public class BattleAxeItem extends Item implements GeoItem {
             Minecraft.getInstance().getSoundManager().play(soundInstance);
         }
     }
+    @Override
     public boolean onEntitySwing(ItemStack itemstack, LivingEntity entity) {
         boolean retval = super.onEntitySwing(itemstack, entity);
+
         if (entity instanceof Player player) {
-            // Check if either sword is on cooldown
             if (player.getCooldowns().isOnCooldown(itemstack.getItem())) {
-                return false; // Cancel the swing if cooldown is active
+                return false; // Cancel swing if on cooldown
             }
-        }
 
+            entity.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
+                boolean isWallRunning = kaiju.isRunningwall();
 
-        entity.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
-            boolean isWallRunning = kaiju.isRunningwall();
-            if (entity instanceof Player player) {
                 CompoundTag tag = itemstack.getOrCreateTag();
 
-                // If player is on the ground, play the "swing_ba" animation
                 if (player.onGround()) {
+                    // ---------- normal swing ----------
                     Vec3 playerPos = player.position();
                     Vec3 playerLook = player.getLookAngle();
                     performSwooshSound(player.level(), player);
                     playAnimation(player, "swing_ba");
+
+                    // 🔥 raytrace just for weak spot
+                    Vec3 start = player.getEyePosition(1.0F);
+                    Vec3 end = start.add(player.getLookAngle().scale(4.0D)); // melee reach
+                    EntityHitResult weakspotHit = getWeakSpotInSight(player.level(), player, start, end);
+                    if (weakspotHit != null && weakspotHit.getEntity() instanceof OrganWeakSpotEntity weakSpot) {
+                        weakSpot.hurt(player.damageSources().playerAttack(player), 8.0F); // axe bonus dmg
+                    }
+
+                    // normal AoE for other mobs
                     List<Entity> nearbyEntities = player.level().getEntities(player, new AABB(
-                            playerPos.x - radius, playerPos.y - 1, playerPos.z - radius, // Min bounds
-                            playerPos.x + radius, playerPos.y + 2, playerPos.z + radius  // Max bounds
+                            playerPos.x - radius, playerPos.y - 1, playerPos.z - radius,
+                            playerPos.x + radius, playerPos.y + 2, playerPos.z + radius
                     ));
                     for (Entity entityNear : nearbyEntities) {
-                        if (entityNear instanceof LivingEntity target && entityNear != player) {
-                            Vec3 toEntity = entityNear.position().subtract(playerPos).normalize(); // Direction to entity
-                            double angle = Math.toDegrees(Math.acos(toEntity.dot(playerLook))); // Angle between look and target
+                        if (entityNear instanceof LivingEntity target && entityNear != player && !(entityNear instanceof OrganWeakSpotEntity)) {
+                            Vec3 toEntity = entityNear.position().subtract(playerPos).normalize();
+                            double angle = Math.toDegrees(Math.acos(toEntity.dot(playerLook)));
 
-                            if (angle <= 90) { // 180-degree check (90 degrees in each direction)
+                            if (angle <= 90) {
                                 target.hurt(player.damageSources().playerAttack(player), (float) attackDamage);
                             }
                         }
                     }
+
                     player.getCooldowns().addCooldown(itemstack.getItem(), 7);
 
-                } else if (isOverheadCooldown == false && !isWallRunning) {
-
+                } else if (!isOverheadCooldown && !isWallRunning) {
+                    // ---------- overhead slam ----------
                     playAnimation(player, "overheadstart_ba");
                     startedSlam = true;
                     isOverheadCooldown = true;
-                    KaijuCraft.queueServerWork(60,() ->{
+                    KaijuCraft.queueServerWork(60, () -> {
                         isOverheadCooldown = false;
                     });
-                    // Apply forward movement based on the player's look direction
-                    Vec3 lookVec = player.getLookAngle();
-                    double lungeStrength = 0.75; // Adjust strength as needed
-                    Vec3 lunge = new Vec3(lookVec.x * lungeStrength, 0, lookVec.z * lungeStrength); // No Y movement
-                    player.setDeltaMovement(player.getDeltaMovement().add(lunge)); // Add to current velocity
-                    player.getCooldowns().addCooldown(itemstack.getItem(), 60);
 
+                    // Lunge forward
+                    Vec3 lookVec = player.getLookAngle();
+                    Vec3 lunge = new Vec3(lookVec.x * 0.75, 0, lookVec.z * 0.75);
+                    player.setDeltaMovement(player.getDeltaMovement().add(lunge));
+
+                    player.getCooldowns().addCooldown(itemstack.getItem(), 60);
                 }
-            }
-        });
+            });
+        }
 
         return retval;
+    }
+
+    /** Same helper from sword, only checks for OrganWeakSpotEntity */
+    private EntityHitResult getWeakSpotInSight(Level level, Player player, Vec3 start, Vec3 end) {
+        for (Entity entity : level.getEntities(player, new AABB(start, end).inflate(0.5))) {
+            if (entity instanceof OrganWeakSpotEntity) {
+                AABB aabb = entity.getBoundingBox();
+                Optional<Vec3> hitVec = aabb.clip(start, end);
+                if (hitVec.isPresent()) {
+                    return new EntityHitResult(entity, hitVec.get());
+                }
+            }
+        }
+        return null;
     }
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {

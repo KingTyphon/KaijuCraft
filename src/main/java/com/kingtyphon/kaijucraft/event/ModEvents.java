@@ -1,17 +1,14 @@
 package com.kingtyphon.kaijucraft.event;
 
 import com.kingtyphon.kaijucraft.KaijuCraft;
-import com.kingtyphon.kaijucraft.capabilities.KaijuCapability;
-import com.kingtyphon.kaijucraft.capabilities.KaijuProvider;
-import com.kingtyphon.kaijucraft.commands.*;
-import com.kingtyphon.kaijucraft.effects.PowerPlayerEffect;
+import com.kingtyphon.kaijucraft.common.capabilities.KaijuProvider;
+import com.kingtyphon.kaijucraft.common.commands.*;
+import com.kingtyphon.kaijucraft.client.effects.PowerPlayerEffect;
 import com.kingtyphon.kaijucraft.entity.kaiju.Kaiju_no8Entity;
 import com.kingtyphon.kaijucraft.init.EntityInit;
 import com.kingtyphon.kaijucraft.init.ItemInit;
-import com.kingtyphon.kaijucraft.item.armor.CombatArmorItem;
 import com.kingtyphon.kaijucraft.item.guns.Cannon;
 import com.kingtyphon.kaijucraft.item.guns.Glock17Gen4;
-import com.kingtyphon.kaijucraft.item.guns.Glock17Gen4Renderer;
 import com.kingtyphon.kaijucraft.item.guns.SigSauerShortRifleItem;
 import com.kingtyphon.kaijucraft.item.melee.BattleAxeItem;
 import com.kingtyphon.kaijucraft.item.melee.TwinSwordItem;
@@ -19,8 +16,6 @@ import com.kingtyphon.kaijucraft.networking.KaijuHelper;
 import com.kingtyphon.kaijucraft.networking.ModMessages;
 import com.kingtyphon.kaijucraft.networking.packets.KaijuPacket;
 import com.kingtyphon.kaijucraft.networking.packets.SyncPlayerAnimationPacket;
-import com.lowdragmc.photon.client.fx.BlockEffect;
-import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,7 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -45,19 +40,23 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.command.ConfigCommand;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -115,8 +114,12 @@ public class ModEvents {
                 int xpGain = 0;
                 if (event.getEntity() instanceof Kaiju_no8Entity) {
                     xpGain = 500; // Example XP value
-                } else if (event.getEntity().getType() == EntityInit.PRIMIGENIUS.get()) {
+                } else if (event.getEntity().getType() == EntityInit.TRICHONEPHILA.get()) {
+                    xpGain = 50;
+                }  else if (event.getEntity().getType() == EntityInit.PRIMIGENIUS.get()) {
                     xpGain = 40;
+                } else if (event.getEntity().getType() == EntityInit.PHANEROPLUS.get()) {
+                    xpGain = 20;
                 } else if (event.getEntity() instanceof ServerPlayer ) {
                     if(KaijuHelper.isHigherLevel((ServerPlayer)event.getEntity(), (ServerPlayer) event.getSource().getEntity() )){
                         xpGain = 25;
@@ -175,59 +178,89 @@ public class ModEvents {
         });
     }
 
-
     @SubscribeEvent
-    public static void onPlayerRender(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
-        ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
-        PlayerModel<AbstractClientPlayer> playerModel = event.getRenderer().getModel();
+    public static void onRenderHand(RenderHandEvent event) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
 
-        if (helmet.getItem() instanceof CombatArmorItem) {
-                playerModel.hat.visible = false; // Hide the hat layer
-
-        }
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(capability -> {
             if (capability.isTransformed()) {
                 event.setCanceled(true);
 
-                Minecraft mc = Minecraft.getInstance();
-                EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
-                PoseStack poseStack = event.getPoseStack();
-                MultiBufferSource bufferSource = mc.renderBuffers().bufferSource();
+                Kaiju_no8Entity kaiju = capability.getKaijuEntity();
+                if (kaiju != null) {
+                    PoseStack poseStack = event.getPoseStack();
+                    MultiBufferSource buffer = event.getMultiBufferSource();
+                    float partialTick = event.getPartialTick();
 
-                // Store the entity instance inside the capability or a map
-                Kaiju_no8Entity kaijuNo8 = capability.getKaijuEntity();
-                if (kaijuNo8 == null) {
-                    kaijuNo8 = EntityInit.KAIJU_NO8.get().create(player.level());
-                    if (kaijuNo8 == null) return;
-                    capability.setKaijuEntity(kaijuNo8);
+                    // Render just the Kaiju arms/first-person layer here
+                    // (you may need a separate geo model with only arms bones visible)
+                    Minecraft.getInstance().getEntityRenderDispatcher().render(
+                            kaiju, 0, -1.0, 0, 0, partialTick, poseStack, buffer, 15728880
+                    );
                 }
-                kaijuNo8.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
-                player.level().addFreshEntity(kaijuNo8);
-
-                // Ensure animation updates
-                kaijuNo8.setOwner(player);
-                kaijuNo8.tick(); // Manually call tick
-//                kaijuNo8.syncAnimationWithPlayer(player);
-                // Sync movement & rotation
-//                kaijuNo8.setDeltaMovement(player.getDeltaMovement());
-                kaijuNo8.copyPosition(player);
-                kaijuNo8.yBodyRot = player.yBodyRot;
-                kaijuNo8.yBodyRotO = player.yBodyRotO;
-                kaijuNo8.yRotO = player.yRotO;
-                kaijuNo8.setXRot(player.getXRot());
-
-
-                poseStack.pushPose();
-                dispatcher.render(kaijuNo8, 0, 0, 0, 0, event.getPartialTick(), poseStack, bufferSource, 15728880);
-                poseStack.popPose();
             }
         });
+    }
+    private static final Map<UUID, Kaiju_no8Entity> ACTIVE_KAIJU_ENTITIES = new HashMap<>();
+
+    private static Kaiju_no8Entity getOrCreateKaiju(Player player) {
+        return ACTIVE_KAIJU_ENTITIES.computeIfAbsent(player.getUUID(), id -> {
+            Kaiju_no8Entity k = new Kaiju_no8Entity(EntityInit.KAIJU_NO8.get(), player.level());
+            k.setNoAi(true);
+            k.noPhysics = true;
+            return k;
+        });
+    }
+    @SubscribeEvent
+    public static void onPlayerRender(RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
+        if (event.getEntity() instanceof Player player)
+
+            player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(cap -> {
+                if (!cap.isTransformed()) {
+                    // If transformation is off, remove cached entity
+                    ACTIVE_KAIJU_ENTITIES.remove(player.getUUID());
+                    return;
+                }
+
+                event.setCanceled(true); // cancel vanilla rendering
+
+                Minecraft mc = Minecraft.getInstance();
+
+                // Reuse or create the Kaiju entity
+                Kaiju_no8Entity kaiju = ACTIVE_KAIJU_ENTITIES.computeIfAbsent(player.getUUID(), id -> {
+                    Kaiju_no8Entity k = new Kaiju_no8Entity(EntityInit.KAIJU_NO8.get(), mc.level);
+                    k.setNoAi(true);
+                    k.noPhysics = true;
+                    return k;
+                });
+
+                // Sync Kaiju state with player
+                kaiju.yBodyRot = player.yBodyRot;
+                kaiju.yBodyRotO = player.yBodyRotO; // smooth rotation
+//                // DO NOT set head rotation (fixes the “funky” glitch)
+
+                // Drive animations if needed
+                kaiju.setAnimationDriver(player);
+
+                // Render using GeckoLib renderer
+                EntityRenderer<? super Kaiju_no8Entity> renderer = mc.getEntityRenderDispatcher().getRenderer(kaiju);
+                if (renderer instanceof GeoEntityRenderer geoRenderer) {
+                    geoRenderer.render(
+                            kaiju,
+                            kaiju.yBodyRot,
+                            event.getPartialTick(),
+                            event.getPoseStack(),
+                            event.getMultiBufferSource(),
+                            event.getPackedLight()
+                    );
+                }
+            });
     }
 
 
 
-    private static void sendAnimationToServer(Player player, String animationName, String animationType) {
+            private static void sendAnimationToServer(Player player, String animationName, String animationType) {
         if (player instanceof AbstractClientPlayer) {
             ModMessages.sendToServer(new SyncPlayerAnimationPacket(player.getUUID(), animationName, animationType));
         }
@@ -296,7 +329,29 @@ public class ModEvents {
 
     // Track the last jump time for each player
     private static final Map<UUID, Long> lastJumpTimes = new HashMap<>();
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        if (!(event.getSource().getEntity() instanceof Player player)) return;
 
+        // Only apply if holding melee weapons (not ranged guns)
+        ItemStack weapon = player.getMainHandItem();
+        if (!(weapon.getItem() instanceof SwordItem || weapon.getItem() instanceof BattleAxeItem || weapon.getItem() instanceof TwinSwordItem || weapon.isEmpty())) {
+            return;
+        }
+
+        player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
+            boolean empowered = isWearingSpecialArmor(player);
+            boolean transformed = kaiju.isTransformed() ;
+            if(transformed){
+                event.setAmount(event.getAmount() + 20 + kaiju.getLevel() * 1);
+            }
+            if (empowered && !transformed) {
+                // Add flat bonus based on Kaiju level
+                float bonus = (float) (kaiju.getLevel() * 0.25); // Example: +0.5 damage per level
+                event.setAmount(event.getAmount() + bonus);
+            }
+        });
+    }
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 
@@ -311,61 +366,138 @@ public class ModEvents {
         // Access the Kaiju capability
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
             // Check if the player has enough XP to level up
-            float extraDamage = kaiju.getLevel() * .1F; // Example: 2 damage per Kaiju level
-            UUID SPEED_MODIFIER = UUID.fromString("11111111-1111-1111-1111-111111111111");
-            UUID DAMAGE_MODIFIER = UUID.fromString("22222222-2222-2222-2222-222222222222");
-            UUID HEALTH_MODIFIER = UUID.fromString("33333333-3333-3333-3333-333333333333");
+             UUID playerUUID = player.getUUID();
+            UUID SPEED_MODIFIER     = UUID.fromString("11111111-1111-1111-1111-111111111111");
+            UUID HEALTH_MODIFIER    = UUID.fromString("33333333-3333-3333-3333-333333333333");
             UUID KNOCKBACK_MODIFIER = UUID.fromString("44444444-4444-4444-4444-444444444444");
-            UUID playerUUID = player.getUUID();
+            UUID ARMOR_MODIFIER     = UUID.fromString("55555555-5555-5555-5555-555555555555");
+            UUID TOUGHNESS_MODIFIER = UUID.fromString("66666666-6666-6666-6666-666666666666");
+            if (kaiju.isTransformed()) {
+                // Reuse or create Kaiju entity for rendering/logic
+                if (kaiju.isTransformed()) {
+                    Kaiju_no8Entity kaijuEntity = getOrCreateKaiju(player);
 
-            if (isWearingSpecialArmor(player)) {
+                    kaijuEntity.setPos(player.getX(), player.getY(), player.getZ());
+                    kaijuEntity.yBodyRot = player.yBodyRot;
+                    kaijuEntity.yBodyRotO = player.yBodyRotO; // smooth rotation
+//                // DO NOT set head rotation (fixes the “funky” glitch)
+
+                    kaijuEntity.tick();
+                    kaijuEntity.tickCount++; // now this is safe, only increments once per game tick
+                    kaijuEntity.copyPosition(player);
+                    kaijuEntity.yBodyRot = player.yBodyRot;
+                    kaijuEntity.yBodyRotO = player.yBodyRotO;
+
+                    // Update animations if needed
+                    kaijuEntity.setAnimationDriver(player);
+
+                } else {
+                    ACTIVE_KAIJU_ENTITIES.remove(player.getUUID());
+                }
+            }
+            boolean transformed = kaiju.isTransformed();
 
 
-                // Only restore hunger if it's not full
+            if (isWearingSpecialArmor(player) || transformed) {
 
+                // Hunger regen
                 int tickCount = playerTickCounters.getOrDefault(playerUUID, 0);
-
-                    if (tickCount >= SATURATION_INTERVAL) {
-                        FoodData foodData = player.getFoodData();
-                        if (foodData.getFoodLevel() < 20) {
-                            foodData.eat(1, 0.5F); // Restores 1 hunger & 0.5 saturation (adjust as needed)
-                        }
-                        playerTickCounters.put(playerUUID, 0); // Reset counter
-                    } else {
-                        playerTickCounters.put(playerUUID, tickCount + 1); // Increment counter
+                if (tickCount >= SATURATION_INTERVAL) {
+                    FoodData foodData = player.getFoodData();
+                    if (foodData.getFoodLevel() < 20) {
+                        foodData.eat(1, 0.5F);
                     }
+                    playerTickCounters.put(playerUUID, 0);
+                } else {
+                    playerTickCounters.put(playerUUID, tickCount + 1);
+                }
 
-
-
+                // Speed boost (make this higher than before)
                 AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
                 if (speedAttr != null && speedAttr.getModifier(SPEED_MODIFIER) == null) {
-                    speedAttr.addTransientModifier(new AttributeModifier(SPEED_MODIFIER, "Armor speed boost", 0.1 + (0.00005 * kaiju.getLevel()), AttributeModifier.Operation.ADDITION));
+                    double multiplier = kaiju.isTransformed() ? 0.25D : 0.15D;
+
+                    speedAttr.addTransientModifier(
+                            new AttributeModifier(SPEED_MODIFIER,
+                                    "Kaiju speed boost",
+                                    multiplier + (0.0001 * kaiju.getLevel()), // was 0.1, now faster
+                                    AttributeModifier.Operation.ADDITION));
                 }
 
-                AttributeInstance attackAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
-                if (attackAttr != null && attackAttr.getModifier(DAMAGE_MODIFIER) == null) {
-                    attackAttr.addTransientModifier(new AttributeModifier(DAMAGE_MODIFIER, "Armor attack boost", extraDamage, AttributeModifier.Operation.ADDITION));
-                }
-
+                // Extra health
                 AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
                 if (healthAttr != null && healthAttr.getModifier(HEALTH_MODIFIER) == null) {
-                    healthAttr.addTransientModifier(new AttributeModifier(HEALTH_MODIFIER, "Armor health boost", 20 + (40 * kaiju.getLevel() / 100), AttributeModifier.Operation.ADDITION));
+                    double multiplier = kaiju.isTransformed() ? 60D : 40D;
+
+                    healthAttr.addTransientModifier(
+                            new AttributeModifier(HEALTH_MODIFIER,
+                                    "Kaiju health boost",
+                                    20D + (multiplier * kaiju.getLevel() / 100), // more base HP
+                                    AttributeModifier.Operation.ADDITION));
                 }
 
+                // Knockback boost
                 AttributeInstance knockbackAttr = player.getAttribute(Attributes.ATTACK_KNOCKBACK);
                 if (knockbackAttr != null && knockbackAttr.getModifier(KNOCKBACK_MODIFIER) == null) {
-                    knockbackAttr.addTransientModifier(new AttributeModifier(KNOCKBACK_MODIFIER, "Armor knockback boost", 1.0D, AttributeModifier.Operation.ADDITION));
+                    double multiplier = kaiju.isTransformed() ? 5.0 : 2.0;
+
+                    knockbackAttr.addTransientModifier(
+                            new AttributeModifier(KNOCKBACK_MODIFIER,
+                                    "Kaiju knockback boost",
+                                    multiplier, // stronger knockback
+                                    AttributeModifier.Operation.ADDITION));
                 }
 
+                // Armor boost
+                if(transformed) {
+                    AttributeInstance armorAttr = player.getAttribute(Attributes.ARMOR);
+                    if (armorAttr != null && armorAttr.getModifier(ARMOR_MODIFIER) == null) {
 
+                        armorAttr.addTransientModifier(
+                                new AttributeModifier(ARMOR_MODIFIER,
+                                        "Kaiju armor boost",
+                                        10D + (10D * kaiju.getLevel() / 100),
+                                        AttributeModifier.Operation.ADDITION));
+                    }
+                }
+                // Toughness boost
+                AttributeInstance toughnessAttr = player.getAttribute(Attributes.ARMOR_TOUGHNESS);
+                if (toughnessAttr != null && toughnessAttr.getModifier(TOUGHNESS_MODIFIER) == null) {
+                    double multiplier = kaiju.isTransformed() ? 10.0 : 5.0;
+
+                    toughnessAttr.addTransientModifier(
+                            new AttributeModifier(TOUGHNESS_MODIFIER,
+                                    "Kaiju toughness boost",
+                                    5D + (multiplier * kaiju.getLevel() / 100),
+                                    AttributeModifier.Operation.ADDITION));
+                }
+
+                if (transformed) {
+                    int healInterval = 20; // every 40 ticks = 2 seconds
+                    int healAmount = 4;    // half a heart per tick interval
+
+                    int ticks = playerTickCounters.getOrDefault(playerUUID, 0);
+
+                    if (ticks >= healInterval) {
+                        if (player.getHealth() < player.getMaxHealth()) {
+                            player.heal(healAmount); // heals directly
+                        }
+                        playerTickCounters.put(playerUUID, 0); // reset counter
+                    } else {
+                        playerTickCounters.put(playerUUID, ticks + 1);
+                    }
+                }
             } else {
                 playerTickCounters.remove(playerUUID); // Reset if they remove armor
 
                 // Remove modifiers when armor is removed
                 removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER);
-                removeModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MODIFIER);
                 removeModifier(player, Attributes.MAX_HEALTH, HEALTH_MODIFIER);
                 removeModifier(player, Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER);
+                removeModifier(player, Attributes.ARMOR, ARMOR_MODIFIER);
+                removeModifier(player, Attributes.ARMOR_TOUGHNESS, TOUGHNESS_MODIFIER);
+
+
             }
             if (kaiju.getXP() >= kaiju.getMaxXp()) {
                 // Level up the player
@@ -396,10 +528,15 @@ public class ModEvents {
         if (mc.player == null) return;
 
         Player player = mc.player;
+        Kaiju_no8Entity kaijuEntity = ACTIVE_KAIJU_ENTITIES.get(mc.player.getUUID());
+        if (kaijuEntity != null) {
+            kaijuEntity.tickCount++;
 
+        }
         // Check if player is wearing the custom armor
         player.getCapability(KaijuProvider.KAIJU_CAPABILITY).ifPresent(kaiju -> {
             ItemStack hand = player.getMainHandItem();
+
             if(isPlayerEmoting(player.getUUID())){
                 playAnimation(player, "getgriddy","animation");
                 return;}
@@ -481,9 +618,9 @@ public class ModEvents {
                     if (player.onGround()) {
                         if (player.isSprinting()) {
                              // Sprint animation
-                        } else if (player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                        } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                             animationToPlay = "canon_walk"; // Walking animation (could be any other animation based on movement)
-                        } else {
+                        } else if (!player.isCrouching()) {
                             animationToPlay = "canon_idle"; // Idle animation (only if not moving)
                         }
                     } else if(!player.swinging && !kaiju.isRunningwall()){
@@ -514,9 +651,9 @@ public class ModEvents {
                 if (player.onGround()) {
                     if (player.isSprinting()) {
                         animationToPlay = "sprint_ts"; // Sprint animation
-                    } else if (player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                    } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                         animationToPlay = "walk_ts"; // Walking animation (could be any other animation based on movement)
-                    } else {
+                    } else if (!player.isCrouching()) {
                         animationToPlay = "idle_ts"; // Idle animation (only if not moving)
                     }
                 } else if(!player.swinging && isWallRunning){
@@ -552,9 +689,9 @@ public class ModEvents {
                     if (player.onGround()) {
                         if (player.isSprinting()) {
                             animationToPlay = "sprint_ba"; // Sprint animation
-                        } else if ( player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                        } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                             animationToPlay = "walk_ba"; // Walking animation (could be any other animation based on movement)
-                        } else {
+                        } else if (!player.isCrouching()) {
                             animationToPlay = "idle_ba"; // Idle animation (only if not moving)
                         }
                     } else if( !isWallRunning && !player.swinging){
@@ -589,9 +726,9 @@ public class ModEvents {
                         if (player.isSprinting()) {
                             animationToPlay = "sprint_sigsauer"; // Walking animation (could be any other animation based on movement)
 
-                        } else if (player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                        } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                             animationToPlay = "walk_sigsauer"; // Walking animation (could be any other animation based on movement)
-                        } else {
+                        } else if (!player.isCrouching()) {
                             animationToPlay = "idle_sigsauer"; // Idle animation (only if not moving)
                         }
                     }
@@ -622,9 +759,9 @@ public class ModEvents {
                         if (player.isSprinting()) {
                             animationToPlay = "sprint_glock"; // Walking animation (could be any other animation based on movement)
 
-                        } else if (player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                        } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                             animationToPlay = "walk_glock"; // Walking animation (could be any other animation based on movement)
-                        } else {
+                        } else if (!player.isCrouching()) {
                             animationToPlay = "idle_glock"; // Idle animation (only if not moving)
                         }
                     }else if( !isWallRunning){
@@ -667,9 +804,9 @@ public class ModEvents {
                     if (player.isSprinting()) {
                         animationToPlay = "sprint_glock"; // Walking animation (could be any other animation based on movement)
 
-                    } else if (player.getDeltaMovement().x > 0 || player.getDeltaMovement().z > 0) {
+                    } else if (player.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
                         animationToPlay = "walk_glock"; // Walking animation (could be any other animation based on movement)
-                    } else {
+                    } else if (!player.isCrouching()) {
                         animationToPlay = "idle_glock"; // Idle animation (only if not moving)
                     }
                 }

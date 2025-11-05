@@ -1,0 +1,101 @@
+{
+  "parent": "builtin/entity",
+  "texture_size": [
+    514,
+    579
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [
+        0.25,
+        -10.5,
+        -1
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        0.25,
+        -10.5,
+        -1
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        8,
+        0,
+        0
+      ],
+      "translation": [
+        -0.5,
+        -8,
+        -1.25
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        8,
+        0,
+        0
+      ],
+      "translation": [
+        -0.5,
+        -8,
+        -1.25
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        -87
+      ],
+      "translation": [
+        -12.75,
+        -4.25,
+        0
+      ],
+      "scale": [
+        1.23,
+        1.23,
+        1.23
+      ]
+    },
+    "gui": {
+      "rotation": [
+        93.13,
+        -49.71,
+        92.33
+      ],
+      "translation": [
+        5,
+        -7.5,
+        0.25
+      ],
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        93.13,
+        -49.71,
+        92.33
+      ],
+      "translation": [
+        6,
+        -9.5,
+        0.25
+      ],
+      "scale": [
+        0.92,
+        0.92,
+        0.92
+      ]
+    }
+  },
+  "textures": {
+    "particle": "item/stiched_texture"
+  }
+}
